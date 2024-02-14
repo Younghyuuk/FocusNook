@@ -10,7 +10,7 @@
 //     console.log("listening to port 4000");
 // });
 const express = require('express');
-const connectToMongoDB = require('../db');
+const connectToMongoDB = require('./db');
 
 
 const app = express();
@@ -29,10 +29,19 @@ connectToMongoDB()
     process.exit(1); // Exit the app if the connection fails
   });
 
-// Example route
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+// Example route that doesnt work yet
+app.get('/users', async (req, res) => {
+  try {
+    const db = await connectToMongoDB(); // Assuming this is your connection function
+    const collection = db.collection('myCollection');
+    const data = await collection.find({}).toArray(); // Fetches all documents
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).send('Error fetching data');
+  }
 });
+
 
 // Listen on the configured port
 app.listen(port, () => {
