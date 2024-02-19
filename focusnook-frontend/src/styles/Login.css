@@ -22,12 +22,13 @@
       background: rgba(0, 0, 0, 0.6); /* Black with 50% opacity */
       z-index: 1; /* Ensure it sits above the background image */
   }
+  
   .logo-container {
     position: relative; /* Make sure forms are positioned in the stacking context */
     z-index: 2; /* Higher z-index to ensure forms sit above the overlay */
   }
   
-  .login-form {
+  .login-form, .signup-form {
     color: white;
     position: relative; /* Make sure forms are positioned in the stacking context */
     z-index: 2; /* Higher z-index to ensure forms sit above the overlay */
@@ -35,14 +36,10 @@
     flex-direction: column;
   }
 
-  .signup-text {
+  .signup-text, .login-text {
     position: relative; /* Make sure forms are positioned in the stacking context */
     z-index: 2; /* Higher z-index to ensure forms sit above the overlay */
     color:white;
-  }
-  .signup-form {
-    display: flex;
-    flex-direction: column;
   }
   
   label {

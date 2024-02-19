@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import './Login.css';
+import { Link } from 'react-router-dom';
+import '../styles/Login.css';
 import Logo from '../assets/focusnook-logo.png';
 
 function Login() {
@@ -21,7 +22,7 @@ function Login() {
           </form>
     
           <p className="signup-text">
-            Don't have an account?
+            Don't have an account? <Link to="/SignUp">Sign up here</Link>.
           </p>
         </div>
         </div>
