@@ -1,0 +1,12 @@
+/* TimeDisplay.css */
+.time-display {
+    position: fixed; 
+    bottom: 10px; 
+    right: 20px;
+    color: #fff; 
+    padding: 5px 10px; 
+    font-size: 55px; 
+    font-family: 'Varela Round', sans-serif;
+    font-weight: bold; 
+    z-index: 1000; 
+  }
