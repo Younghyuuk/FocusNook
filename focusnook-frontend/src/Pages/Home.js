@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import TopBar from '../Components/UtlityComponents/TopBar';
 import Collaboration from '../Components/Collaboration';
 import Calendar from '../Components/Calendar';
+import Themes from '../Components/Themes';
 import SoundButton from '../Components/UtlityComponents/SoundButton';
 import TimeDisplay from '../Components/UtlityComponents/TimeDisplay';
 import Logo from '../assets/focusnook-logo.png';
@@ -19,6 +20,8 @@ function HomePage() {
         return <Collaboration />;
       case 'calendar':
         return <Calendar />;
+        case 'themes':
+          return <Themes />;
       // ... cases for other components
       default:
         return null; // Return nothing if no tab is active
