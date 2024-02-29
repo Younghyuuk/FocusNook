@@ -7,7 +7,7 @@ require('./db');
 const User = require('./User')
 
 const app = express();
-const port = 3000;
+const port = 2000;
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -31,7 +31,7 @@ app.use(express.json());
   // User login route
   app.post('/login', async (req, res) => {
     try {
-      const user = await User.findOne({ username: req.body.username });
+      const user = await User.findOne({ username: req.body.email });
       if (user && await bcrypt.compare(req.body.password, user.password)) {
         const token = jwt.sign({ userId: user._id }, 'your_secret_key', { expiresIn: '1h' });
         res.json({ token: token });
