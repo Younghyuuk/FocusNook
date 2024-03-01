@@ -1,0 +1,75 @@
+.themes-main-container {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    width: 90%;
+    height: 90%;
+    margin: auto;
+  }
+  .themes-container {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    width: 90%;
+    height: 75%;
+    margin: auto;
+    margin-bottom: 20px;
+    overflow-y: auto;
+  }
+  
+  .themes-container h1 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .themes-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .themes-container li {
+    margin-bottom: 8px;
+  }
+  
+  .theme-button {
+    width: 100%;
+    height: 170px;
+    padding: 5px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  .image-inside-button {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This will cover the area and will be cropped to fit */
+    object-position: center; /* This will center the image in the button */
+  }
+  
+  .theme-button:hover {
+    border-color: #888;
+  }
+  
+  /* Example theme button styles */
+  .theme-light {
+    /* Light theme styles */
+  }
+  
+  .theme-dark {
+    background-color: #333;
+    color: #fff;
+    /* Dark theme styles */
+  }
+  
+  .theme-colorful {
+    /* Colorful theme styles */
+  }
+  
+  .theme-monochrome {
+    background-color: #eee;
+    color: #333;
+    /* Monochrome theme styles */
+  }
+  
