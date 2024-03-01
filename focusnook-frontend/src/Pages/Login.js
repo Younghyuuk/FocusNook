@@ -23,6 +23,7 @@ function Login() {
           navigate('/Home'); // Redirect to home page on successful login
         })
         .catch(function (error) {
+          console.log(error.response);
           console.error('Error:', error);
         });
     };

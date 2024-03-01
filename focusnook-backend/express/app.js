@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cors = require('cors'); // Require the CORS module
 
 // this connects to mongoDB
 require('./db');
@@ -12,6 +13,10 @@ const port = 2000;
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+// Enable CORS for all routes
+app.use(cors({
+  origin: 'http://localhost:3000' // This will allow your frontend server to access the backend
+}));
 
   app.post('/register', async (req, res) => {
     try {
@@ -31,7 +36,7 @@ app.use(express.json());
   // User login route
   app.post('/login', async (req, res) => {
     try {
-      const user = await User.findOne({ username: req.body.email });
+      const user = await User.findOne({ email: req.body.email });
       if (user && await bcrypt.compare(req.body.password, user.password)) {
         const token = jwt.sign({ userId: user._id }, 'your_secret_key', { expiresIn: '1h' });
         res.json({ token: token });
