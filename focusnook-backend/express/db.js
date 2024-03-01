@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const mongoURI = 'mongodb+srv://aychon:focusnook123@focusnook.vkt1agp.mongodb.net/';
+const mongoURI = 'mongodb+srv://aychon:focusnook123@focusnook.vkt1agp.mongodb.net/FocusNook';
 
 mongoose.connect(mongoURI, {
   // Remove useNewUrlParser and useUnifiedTopology options
