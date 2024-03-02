@@ -71,21 +71,28 @@ app.use(cors({
     }
   });
   
+
+
   // Update user profile route
-  app.put('/profile/update', authenticateToken, async (req, res) => {
-    try {
-      const updatedUser = await User.findByIdAndUpdate(req.user.userId, req.body, { new: true });
-      res.json(updatedUser);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+ app.put('/profile/update', authenticateToken, async (req, res) => {
+  try {
+    // Extract email field from req.body
+    const { email, ...updateData } = req.body;
+    
+    // If password is included in update data, hash it before updating
+    if (updateData.password) {
+      updateData.password = await bcrypt.hash(updateData.password, 10);
     }
-  });
+
+    // Update the user profile excluding the email field
+    const updatedUser = await User.findByIdAndUpdate(req.user.userId, updateData, { new: true });
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
   
 
-// // Example route
-// app.get('/', (req, res) => {
-//   res.send('Hello World!');
-// });
 
 
 
