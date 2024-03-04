@@ -11,6 +11,7 @@ function Login() {
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
 
+
     const handleSubmit = (e) => {
       e.preventDefault(); // This prevents the default form submission behavior
       const userData = {

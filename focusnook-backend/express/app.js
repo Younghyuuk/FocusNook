@@ -71,8 +71,6 @@ app.use(cors({
     }
   });
   
-
-
   // Update user profile route
  app.put('/profile/update', authenticateToken, async (req, res) => {
   try {
@@ -91,11 +89,22 @@ app.use(cors({
     res.status(500).json({ error: error.message });
   }
 });
+
+
+// Update user default theme route
+app.put('/profile/default-theme', authenticateToken, async (req, res) => {
+  try {
+    const { default_theme } = req.body; // Extract default_theme field from req.body
+    
+    // Update the user's default theme
+    const updatedUser = await User.findByIdAndUpdate(req.user.userId, { default_theme }, { new: true });
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
   
-
-
-
-
 // Listen on the configured port
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
