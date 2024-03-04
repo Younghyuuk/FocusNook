@@ -75,6 +75,8 @@ app.use(cors({
    *   post:
    *     summary: Authenticate a user
    *     description: Log in with email and password to receive an authentication token.
+   *     tags:
+   *           - User  
    *     requestBody:
    *       required: true
    *       content:
@@ -143,6 +145,8 @@ app.use(cors({
    *   get:
    *     summary: Retrieve user profile information
    *     description: Returns user profile information for the authenticated user.
+   *     tags:
+   *         - User
    *     security:
    *       - bearerAuth: []
    *     responses:
@@ -175,7 +179,56 @@ app.use(cors({
     }
   });
   
-  // Update user profile route
+  /**
+   * @swagger
+   * /profile/update:
+   *   put:
+   *     summary: Update user profile
+   *     description: Allows authenticated users to update their profile information.
+   *     tags:
+   *          - User
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               username:
+   *                 type: string
+   *               email:
+   *                 type: string
+   *                 format: email
+   *               password:
+   *                 type: string
+   *                 format: password
+   *     responses:
+   *       200:
+   *         description: Successfully updated user profile.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/User'
+   *       401:
+   *         description: Unauthorized - Token not provided or invalid.
+   *       403:
+   *         description: Forbidden - Token is no longer valid.
+   *       500:
+   *         description: Internal server error.
+   * components:
+   *   schemas:
+   *     User:
+   *       type: object
+   *       properties:
+   *         username:
+   *           type: string
+   *         email:
+   *           type: string
+   *         password:
+   *           type: string
+   */
   app.put('/profile/update', authenticateToken, async (req, res) => {
     try {
       const updatedUser = await User.findByIdAndUpdate(req.user.userId, req.body, { new: true });
