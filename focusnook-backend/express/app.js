@@ -179,6 +179,7 @@ app.use(cors({
     }
   });
   
+
   /**
    * @swagger
    * /profile/update:
@@ -246,8 +247,6 @@ app.use(cors({
     res.status(500).json({ error: error.message });
   }
 });
-  
-
 
 // define the Swagger JS DOC configuration
 const APIDocOptions = {
@@ -266,9 +265,24 @@ const APIDocOptions = {
 // initialize the swagger-jsdoc
 const APIDocs = swaggerJSdoc(APIDocOptions);
 
+
+
+// Update user default theme route
+app.put('/profile/default-theme', authenticateToken, async (req, res) => {
+  try {
+    const { default_theme } = req.body; // Extract default_theme field from req.body
+    
+    // Update the user's default theme
+    const updatedUser = await User.findByIdAndUpdate(req.user.userId, { default_theme }, { new: true });
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // server swagger documentation
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(APIDocs));
 
+  
 // Listen on the configured port
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

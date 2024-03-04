@@ -27,8 +27,15 @@ const userSchema = new mongoose.Schema({
   dropped_tasks: {
     type: Number,
     default: 0
+  },
+  default_theme: {
+    type: String,
+    default: "Witch Cottage"
+  },
+  notification: {
+    type: Boolean,
+    default: true
   }
-  
 });
 
 // Create a model from the schema

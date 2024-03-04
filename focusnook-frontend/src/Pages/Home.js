@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import axios from "axios";
 import TopBar from '../Components/UtlityComponents/TopBar';
 import Collaboration from '../Components/Collaboration';
 import Calendar from '../Components/Calendar';
@@ -19,10 +20,28 @@ import { AuthContext } from "../contexts/AuthContext";
  */
 function HomePage() {
   const [activeTab, setActiveTab] = useState(''); // Default to no tab
-  const { backgroundClass } = useTheme();
+  const { backgroundClass, changeCurrTheme } = useTheme();
   const { authToken } = useContext(AuthContext);
 
-  // If authToken is not present, redirect to login page
+  
+  useEffect(() => {
+    const fetchDefaultTheme = async () => {
+      try {
+        const response = await axios.get("http://localhost:2000/profile", {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        const defaultTheme = response.data.default_theme; // Assuming default_theme is returned from the backend
+        changeCurrTheme(defaultTheme); // Update the current theme
+      } catch (error) {
+        console.error("Error fetching default theme:", error);
+      }
+    };
+
+    fetchDefaultTheme();
+  }, [authToken]);
+
+
+  //If authToken is not present, redirect to login page
   if (!authToken) {
     return <Navigate to="/Login" replace />;
   }
