@@ -1,6 +1,26 @@
+.background-witch-cottage {
+  background-image: url('../assets/witch cottage.png');
+}
+
+.background-sunny-greenhouse {
+  background-image: url('../assets/sunny greenhouse.png');
+}
+
+.background-mermaid-study {
+  background-image: url('../assets/mermaid study.png');
+}
+
+.background-autumn-dream {
+  background-image: url('../assets/autumn dream.png');
+}
+
+.background-magic-dorm {
+  background-image: url('../assets/magic dorm.png');
+}
+
+
 .home-container {
     position: relative;
-    background-image: url('../assets/witch cottage.png');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -63,6 +83,8 @@
 }
 
 .overlay-content {
+  margin-top: 50px;
+  border-radius: 10px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -73,5 +95,22 @@
   display: flex; 
   justify-content: center; 
   align-items: center; 
-  background-color: rgba(255, 255, 255, 0.8); 
+  background-color: rgba(255, 255, 255, 0.842); 
+}
+
+
+.close-button {
+  position: absolute;
+  top: -10px; /* Adjust the value as needed */
+  right: 20px; /* Adjust the value as needed */
+  background: transparent;
+  border: none;
+  font-size: 50px;
+  color: white; /* You can change the color as needed */
+  cursor: pointer;
+  z-index: 10; /* Ensure it is above other content */
+}
+
+.close-button:hover {
+  color: #eee9e9; /* Lighter shade when hovered for a nice effect */
 }
