@@ -1,0 +1,64 @@
+.background-witch-cottage {
+    background-image: url('../assets/witch cottage.png');
+  }
+  
+  .background-sunny-greenhouse {
+    background-image: url('../assets/sunny greenhouse.png');
+  }
+  
+  .background-mermaid-study {
+    background-image: url('../assets/mermaid study.png');
+  }
+  
+  .background-autumn-dream {
+    background-image: url('../assets/autumn dream.png');
+  }
+  
+  .background-magic-dorm {
+    background-image: url('../assets/magic dorm.png');
+  }
+  
+.room-container {
+    position: relative;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+  }
+  .sound-button {
+    background-color: rgba(209, 199, 199, 0.7);
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 1); 
+  }
+  .time-display {
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 1); 
+  }
+
+  .exit-button {
+    position: absolute;
+    top: 0%;
+    left: 1%;
+  }
+  .task-button {
+    position: absolute;
+    top: 0%;
+    right: 1%;
+  }
+  .room-buttons button {
+    background-color: rgba(228, 216, 216, 0.781); 
+    color: white; 
+    border: none;
+    margin-top: 20px;
+    padding: 20px 30px; 
+    border-radius: 10px; 
+    cursor: pointer;
+    transition: background-color 0.8s ease; 
+    font-family: 'Varela Round', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 1);
+  }

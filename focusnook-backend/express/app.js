@@ -11,6 +11,22 @@ const User = require('./User')
 
 const app = express();
 const port = 2000;
+// define the Swagger JS DOC configuration
+const APIDocOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'FocusNook API',
+      version: '1.0.0',
+      description: 'An API for efficient task management and collaboration using express and MongoDB.',
+      servers: ['http://localhost:' + port]
+    },
+  },
+  apis: ['./express/app.js', './express/User.js'],
+};
+
+// initialize the swagger-jsdoc
+const APIDocs = swaggerJSdoc(APIDocOptions);
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -248,22 +264,7 @@ app.use(cors({
   }
 });
 
-// define the Swagger JS DOC configuration
-const APIDocOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'FocusNook API',
-      version: '1.0.0',
-      description: 'An API for efficient task management and collaboration using express and MongoDB.',
-      servers: ['http://localhost:' + port]
-    },
-  },
-  apis: ['./express/app.js', './express/User.js'],
-};
 
-// initialize the swagger-jsdoc
-const APIDocs = swaggerJSdoc(APIDocOptions);
 
 
 
