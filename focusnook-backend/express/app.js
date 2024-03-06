@@ -251,7 +251,36 @@ app.use(cors({
   }
 });
 
-
+/**
+ * @swagger
+ * /tasks:
+ *   post:
+ *     summary: Create a new task
+ *     description: Allows the creation of a new task with given details.
+ *     tags:
+ *          - Tasks
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               dueDate:
+ *                 type: string
+ *                 format: date
+ *               status:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Task created successfully.
+ *       500:
+ *         description: Internal Server Error
+ */
 // POST /tasks: Create a new task
 app.post('/tasks', async (req, res) => {
   try {
@@ -264,6 +293,26 @@ app.post('/tasks', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /tasks:
+ *   get:
+ *     summary: Retrieve all tasks
+ *     description: Fetches a list of all tasks.
+ *     tags:
+ *          - Tasks
+ *     responses:
+ *       200:
+ *         description: A list of tasks.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Task'
+ *       500:
+ *         description: Internal Server Error
+ */
 // GET /tasks: Retrieve a list of all tasks for a user
 app.get('/tasks', async (req, res) => {
   try {
@@ -275,6 +324,29 @@ app.get('/tasks', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /tasks/{taskId}:
+ *   delete:
+ *     summary: Delete a task
+ *     description: Deletes a task based on the task ID.
+ *     tags:
+ *          - Tasks
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         description: Unique ID of the task to delete.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Task deleted successfully.
+ *       404:
+ *         description: Task not found.
+ *       500:
+ *         description: Internal Server Error
+ */
 // DELETE /tasks/{taskId}: Delete a task
 app.delete('/tasks/:taskId', async (req, res) => {
   const taskId = req.params.taskId;
@@ -293,6 +365,35 @@ app.delete('/tasks/:taskId', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /tasks/{taskId}:
+ *   put:
+ *     summary: Update a task
+ *     description: Updates the details of an existing task based on the task ID.
+ *     tags:
+ *          - Tasks
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         description: Unique ID of the task to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Task'
+ *     responses:
+ *       200:
+ *         description: Task updated successfully.
+ *       404:
+ *         description: Task not found.
+ *       500:
+ *         description: Internal Server Error
+ */
 app.put('/tasks/:taskId', async (req, res) => {
   const taskId = req.params.taskId;
 
@@ -311,6 +412,31 @@ app.put('/tasks/:taskId', async (req, res) => {
 });
 
 
+/**
+ * @swagger
+ * /profile/default-theme:
+ *   put:
+ *     summary: Update user's default theme
+ *     description: Allows authenticated users to update their default theme.
+ *     tags:
+ *          - Theme
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               default_theme:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Default theme updated successfully.
+ *       500:
+ *         description: Internal Server Error
+ */
 // Update user default theme route
 app.put('/profile/default-theme', authenticateToken, async (req, res) => {
   try {
