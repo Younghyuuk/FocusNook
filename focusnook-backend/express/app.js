@@ -7,26 +7,13 @@ const swaggerUI = require('swagger-ui-express');
 
 // this connects to mongoDB
 require('./db');
-const User = require('./User')
+const User = require('./User');
+const Task = require('./Tasks');
 
 const app = express();
 const port = 2000;
 // define the Swagger JS DOC configuration
-const APIDocOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'FocusNook API',
-      version: '1.0.0',
-      description: 'An API for efficient task management and collaboration using express and MongoDB.',
-      servers: ['http://localhost:' + port]
-    },
-  },
-  apis: ['./express/app.js', './express/User.js'],
-};
 
-// initialize the swagger-jsdoc
-const APIDocs = swaggerJSdoc(APIDocOptions);
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -265,7 +252,63 @@ app.use(cors({
 });
 
 
+// POST /tasks: Create a new task
+app.post('/tasks', async (req, res) => {
+  try {
+    const taskData = req.body;
+    const newTask = await Task.create(taskData);
+    res.status(201).json(newTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
+// GET /tasks: Retrieve a list of all tasks for a user
+app.get('/tasks', async (req, res) => {
+  try {
+    const allTasks = await Task.find();
+    res.status(200).json(allTasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// DELETE /tasks/{taskId}: Delete a task
+app.delete('/tasks/:taskId', async (req, res) => {
+  const taskId = req.params.taskId;
+
+  try {
+    const deletedTask = await Task.findByIdAndDelete(taskId);
+
+    if (!deletedTask) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    res.status(200).json(deletedTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.put('/tasks/:taskId', async (req, res) => {
+  const taskId = req.params.taskId;
+
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(taskId, req.body, { new: true });
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    res.json(updatedTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 
 
 // Update user default theme route
@@ -280,6 +323,23 @@ app.put('/profile/default-theme', authenticateToken, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+const APIDocOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'FocusNook API',
+      version: '1.0.0',
+      description: 'An API for efficient task management and collaboration using express and MongoDB.',
+      servers: ['http://localhost:' + port]
+    },
+  },
+  apis: ['./express/app.js', './express/User.js', './express/Tasks.js'],
+};
+
+// initialize the swagger-jsdoc
+const APIDocs = swaggerJSdoc(APIDocOptions);
 // server swagger documentation
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(APIDocs));
 
