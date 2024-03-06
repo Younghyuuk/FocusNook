@@ -7,7 +7,7 @@ import Themes from '../Components/Themes';
 import Account from '../Components/Account';
 import SoundButton from '../Components/UtlityComponents/SoundButton';
 import TimeDisplay from '../Components/UtlityComponents/TimeDisplay';
-import { Navigate } from 'react-router-dom'; // Import Navigate
+import { useNavigate, Navigate } from 'react-router-dom'; // Import Navigate
 import Logo from '../assets/focusnook-logo.png';
 import '../styles/Home.css';
 import { useTheme } from '../contexts/ThemeContext';
@@ -22,6 +22,7 @@ function HomePage() {
   const [activeTab, setActiveTab] = useState(''); // Default to no tab
   const { backgroundClass, changeCurrTheme } = useTheme();
   const { authToken } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   
   useEffect(() => {
@@ -77,6 +78,10 @@ function HomePage() {
     }
   };
 
+  const handleEnterRoomClick = () => {
+    navigate('/Room'); // Use the navigate function to change the route
+  };
+  
   return (
     <div className="home-page" >
        <div className={`home-container ${backgroundClass}`}>
@@ -86,7 +91,8 @@ function HomePage() {
         {!activeTab && (
           <div className="permanent-content">
             <img src={Logo} alt="FocusNook-Logo" className='Logo'/>
-            <button className='permanent-button'>ENTER ROOM</button>
+            <button className='permanent-button' onClick={handleEnterRoomClick}>ENTER ROOM</button>
+
           </div>
         )}
 
