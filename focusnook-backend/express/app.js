@@ -486,7 +486,33 @@ app.put('/profile/default-theme', authenticateToken, async (req, res) => {
 });
 
 
-
+/**
+ * @swagger
+ * /calendar/create:
+ *   post:
+ *     summary: Create a unique calendar for a user
+ *     description: This endpoint creates a unique calendar for a user by making a POST request to an external calendar service.
+ *     tags:
+ *         - Calendar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the calendar.
+ *               description:
+ *                 type: string
+ *                 description: Description of the calendar.
+ *     responses:
+ *       201:
+ *         description: Calendar created successfully.
+ *       500:
+ *         description: Error creating calendar.
+ */
 // Create calendar (unique to each user)
 app.post('/calendar/create', async (req, res) => {
   const calendarOptions = {
@@ -508,7 +534,27 @@ app.post('/calendar/create', async (req, res) => {
   }
 });
 
-
+/**
+ * @swagger
+ * /calendar/{calendarId}:
+ *   get:
+ *     summary: Get a calendar by ID
+ *     description: Retrieves a calendar's details by its ID from an external calendar service.
+ *     tags:
+ *          - Calendar
+ *     parameters:
+ *       - in: path
+ *         name: calendarId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: The ID of the calendar to retrieve.
+ *     responses:
+ *       200:
+ *         description: Calendar data retrieved successfully.
+ *       500:
+ *         description: Error retrieving calendar data.
+ */
 app.get('/calendar/:calendarId', async (req, res) => {
   const calendarId = req.params.calendarId; // Extract the calendar ID from the URL parameter
 
@@ -529,6 +575,45 @@ app.get('/calendar/:calendarId', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /calendar/{calendarId}:
+ *   post:
+ *     summary: Create an event on a calendar
+ *     description: Adds a new event to a specified calendar by ID.
+ *     tags:
+ *          - Calendar
+ *     parameters:
+ *       - in: path
+ *         name: calendarId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: The ID of the calendar where the event will be added.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               startTime:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Start time of the event.
+ *               endTime:
+ *                 type: string
+ *                 format: date-time
+ *                 description: End time of the event.
+ *               title:
+ *                 type: string
+ *                 description: Title of the event.
+ *     responses:
+ *       200:
+ *         description: Event created successfully.
+ *       500:
+ *         description: Error creating event.
+ */
 // Create event on calendar
 app.post('/calendar/:calendarId', async (req, res) => {
   const calendarId = req.params.calendarId;
@@ -560,6 +645,41 @@ app.post('/calendar/:calendarId', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /calendarId/{calendarId}/events:
+ *   get:
+ *     summary: Read calendar events within a specific time range
+ *     description: Retrieves events from a specified calendar by ID within a given start and end time.
+ *     tags:
+ *          - Calendar
+ *     parameters:
+ *       - in: path
+ *         name: calendarId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: The ID of the calendar to retrieve events from.
+ *       - in: query
+ *         name: startTime
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *           description: Start time for filtering events.
+ *       - in: query
+ *         name: endTime
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *           description: End time for filtering events.
+ *     responses:
+ *       200:
+ *         description: Events retrieved successfully.
+ *       500:
+ *         description: Error retrieving events.
+ */
 // Read calendar event
 app.get('/calendarId/:calendarId/events', async (req, res) => {
   const calendarId = req.params.calendarId; // Extract the calendar ID from the URL parameter
@@ -589,6 +709,32 @@ app.get('/calendarId/:calendarId/events', async (req, res) => {
 
 
 
+
+// POST endpoint to get task statistics not fully fleshed out for admin access yet
+// still needs more work
+app.post('/task-statistics', async (req, res) => {
+  try {
+    // Example: Calculate the average work time and completion rate for tasks
+    const stats = await Task.aggregate([
+      {
+        $group: {
+          _id: null, // Group all tasks together
+          averageWorkTime: { $avg: "$work_time" },
+          completionRate: { 
+            $avg: { 
+              $cond: [ "$completed", 1, 0 ] // 1 for completed tasks, 0 for others
+            } 
+          }
+        }
+      }
+    ]);
+
+    res.status(200).json(stats);
+  } catch (error) {
+    console.error('Failed to calculate task statistics:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // server swagger documentation
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(APIDocs));
