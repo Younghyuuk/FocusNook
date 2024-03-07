@@ -306,7 +306,7 @@ app.post('/calendar/create', async (req, res) => {
     url: 'https://calendar22.p.rapidapi.com/v1/calendars',
     headers: {
       'content-type': 'application/json',
-      'X-RapidAPI-Key': '75237c7801mshad841c346f5c6a1p182797jsn9acab96248e0', // Replace with your actual API key
+      'X-RapidAPI-Key': API_KEY, // Replace with your actual API key
       'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
     },
     data: req.body // Pass through the client-provided data
@@ -328,7 +328,7 @@ app.get('/calendar/:calendarId', async (req, res) => {
     method: 'GET',
     url: `https://calendar22.p.rapidapi.com/v1/calendars/${calendarId}`,
     headers: {
-      'X-RapidAPI-Key': '75237c7801mshad841c346f5c6a1p182797jsn9acab96248e0', // Replace this with your actual API key
+      'X-RapidAPI-Key': API_KEY, // Replace this with your actual API key
       'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
     }
   };
