@@ -10,6 +10,7 @@ const taskSchema = new mongoose.Schema({
   completed: {
     type: Boolean,
     required: true,
+    default: false,
   },
   date_added: {
     type: String,
@@ -20,21 +21,21 @@ const taskSchema = new mongoose.Schema({
     required: true,
   },
   dropped: {
-    type: Number,
+    type: Boolean,
     required: true,
-  },
-  ongoing: {
-    type: Number,
-    required: true,
-  },
-  progress: {
-    type: Number,
-    required: true,
-    min: 0,
-    max: 100,
+    default: false,
   },
   work_time: {
     type: Number,
+    required: true,
+    default: 0,
+  },
+  start_date: {
+    type: Date,
+    required: true,
+  },
+  due_date: {
+    type: Date,
     required: true,
   },
 });
