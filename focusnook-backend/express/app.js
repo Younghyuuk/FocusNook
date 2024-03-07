@@ -28,7 +28,7 @@ const APIDocOptions = {
 
 // initialize the swagger-jsdoc
 const APIDocs = swaggerJSdoc(APIDocOptions);
-const API_KEY = '75237c7801mshad841c346f5c6a1p182797jsn9acab96248e0';
+const API_KEY = '';
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -90,7 +90,6 @@ app.use(cors({
     try {
       const userId = req.params.id;
       const { calendarId } = req.body;
-  
       // Make sure you are using the correct field name 'calendarId' as defined in your schema
       const updatedUser = await User.findByIdAndUpdate(userId, { calendarId: calendarId }, { new: true });
       

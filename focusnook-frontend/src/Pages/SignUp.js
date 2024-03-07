@@ -21,21 +21,20 @@ function SignUp() {
     axios.post('http://localhost:2000/register', userData)
     .then(function (response) {
       console.log('Registered User:', response.data);
-      const _id = response.data._id; // Store user ID for later use
-  
-      // Now call the calendar create endpoint
-      return axios.post('http://localhost:2000/calendar/create', /* necessary data for calendar creation */)
+      const userId = response.data.userId; // Store user ID for later use
+        // Now call the calendar create endpoint
+        return axios.post('http://localhost:2000/calendar/create', /* necessary data for calendar creation */)
         .then(function (calendarResponse) {
-          console.log('Calendar Created:', calendarResponse.data);
-          const calendarId = calendarResponse.data.id; // Retrieve calendar ID from the response
-  
-          // Make sure you're returning this for the next .then() in the chain
-          return { _id, calendarId }; // Return both _id and calendarId for the next step
-        });
-    })
+        console.log('Calendar Created:', calendarResponse.data);
+        const calendarId = calendarResponse.data.id; // Retrieve calendar ID from the response
+       
+               // Make sure you're returning this for the next .then() in the chain
+        return { userId, calendarId }; // Return both _id and calendarId for the next step
+      }); 
+    }) 
     .then(function (data) {
-      // Now data contains _id and calendarId
-      return axios.put(`http://localhost:2000/updateCalendarId/${data._id}`, { calendarId: data.calendarId });
+      console.log('Data:', data);
+      return axios.put(`http://localhost:2000/updateCalendarId/${data.userId}`, {calendarId : data.calendarId});
     })
     .then(function (updateResponse) {
       console.log('User updated with calendar ID:', updateResponse.data);
