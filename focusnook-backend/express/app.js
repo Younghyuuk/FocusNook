@@ -8,7 +8,8 @@ const swaggerUI = require('swagger-ui-express');
 
 // this connects to mongoDB
 require('./db');
-const User = require('./User')
+const User = require('./User');
+const Task = require('./Tasks');
 
 const app = express();
 const port = 2000;
@@ -23,11 +24,12 @@ const APIDocOptions = {
       servers: ['http://localhost:' + port]
     },
   },
-  apis: ['./express/app.js', './express/User.js'],
+  apis: ['./express/app.js', './express/User.js', './express/Tasks.js'],
 };
 
 // initialize the swagger-jsdoc
 const APIDocs = swaggerJSdoc(APIDocOptions);
+
 const API_KEY = '';
 
 // Middleware to parse JSON bodies
@@ -284,7 +286,192 @@ app.use(cors({
   }
 });
 
+/**
+ * @swagger
+ * /tasks:
+ *   post:
+ *     summary: Create a new task
+ *     description: Allows the creation of a new task with given details.
+ *     tags:
+ *          - Tasks
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               dueDate:
+ *                 type: string
+ *                 format: date
+ *               status:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Task created successfully.
+ *       500:
+ *         description: Internal Server Error
+ */
+// POST /tasks: Create a new task
+app.post('/tasks', async (req, res) => {
+  try {
+    const taskData = req.body;
+    const newTask = await Task.create(taskData);
+    res.status(201).json(newTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
+/**
+ * @swagger
+ * /tasks:
+ *   get:
+ *     summary: Retrieve all tasks
+ *     description: Fetches a list of all tasks.
+ *     tags:
+ *          - Tasks
+ *     responses:
+ *       200:
+ *         description: A list of tasks.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Task'
+ *       500:
+ *         description: Internal Server Error
+ */
+// GET /tasks: Retrieve a list of all tasks for a user
+app.get('/tasks', async (req, res) => {
+  try {
+    const allTasks = await Task.find();
+    res.status(200).json(allTasks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+/**
+ * @swagger
+ * /tasks/{taskId}:
+ *   delete:
+ *     summary: Delete a task
+ *     description: Deletes a task based on the task ID.
+ *     tags:
+ *          - Tasks
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         description: Unique ID of the task to delete.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Task deleted successfully.
+ *       404:
+ *         description: Task not found.
+ *       500:
+ *         description: Internal Server Error
+ */
+// DELETE /tasks/{taskId}: Delete a task
+app.delete('/tasks/:taskId', async (req, res) => {
+  const taskId = req.params.taskId;
+
+  try {
+    const deletedTask = await Task.findByIdAndDelete(taskId);
+
+    if (!deletedTask) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    res.status(200).json(deletedTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+/**
+ * @swagger
+ * /tasks/{taskId}:
+ *   put:
+ *     summary: Update a task
+ *     description: Updates the details of an existing task based on the task ID.
+ *     tags:
+ *          - Tasks
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         description: Unique ID of the task to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Task'
+ *     responses:
+ *       200:
+ *         description: Task updated successfully.
+ *       404:
+ *         description: Task not found.
+ *       500:
+ *         description: Internal Server Error
+ */
+app.put('/tasks/:taskId', async (req, res) => {
+  const taskId = req.params.taskId;
+
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(taskId, req.body, { new: true });
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    res.json(updatedTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+/**
+ * @swagger
+ * /profile/default-theme:
+ *   put:
+ *     summary: Update user's default theme
+ *     description: Allows authenticated users to update their default theme.
+ *     tags:
+ *          - Theme
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               default_theme:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Default theme updated successfully.
+ *       500:
+ *         description: Internal Server Error
+ */
 // Update user default theme route
 app.put('/profile/default-theme', authenticateToken, async (req, res) => {
   try {
@@ -298,6 +485,34 @@ app.put('/profile/default-theme', authenticateToken, async (req, res) => {
   }
 });
 
+
+/**
+ * @swagger
+ * /calendar/create:
+ *   post:
+ *     summary: Create a unique calendar for a user
+ *     description: This endpoint creates a unique calendar for a user by making a POST request to an external calendar service.
+ *     tags:
+ *         - Calendar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Name of the calendar.
+ *               description:
+ *                 type: string
+ *                 description: Description of the calendar.
+ *     responses:
+ *       201:
+ *         description: Calendar created successfully.
+ *       500:
+ *         description: Error creating calendar.
+ */
 // Create calendar (unique to each user)
 app.post('/calendar/create', async (req, res) => {
   const calendarOptions = {
@@ -319,7 +534,27 @@ app.post('/calendar/create', async (req, res) => {
   }
 });
 
-
+/**
+ * @swagger
+ * /calendar/{calendarId}:
+ *   get:
+ *     summary: Get a calendar by ID
+ *     description: Retrieves a calendar's details by its ID from an external calendar service.
+ *     tags:
+ *          - Calendar
+ *     parameters:
+ *       - in: path
+ *         name: calendarId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: The ID of the calendar to retrieve.
+ *     responses:
+ *       200:
+ *         description: Calendar data retrieved successfully.
+ *       500:
+ *         description: Error retrieving calendar data.
+ */
 app.get('/calendar/:calendarId', async (req, res) => {
   const calendarId = req.params.calendarId; // Extract the calendar ID from the URL parameter
 
@@ -340,6 +575,45 @@ app.get('/calendar/:calendarId', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /calendar/{calendarId}:
+ *   post:
+ *     summary: Create an event on a calendar
+ *     description: Adds a new event to a specified calendar by ID.
+ *     tags:
+ *          - Calendar
+ *     parameters:
+ *       - in: path
+ *         name: calendarId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: The ID of the calendar where the event will be added.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               startTime:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Start time of the event.
+ *               endTime:
+ *                 type: string
+ *                 format: date-time
+ *                 description: End time of the event.
+ *               title:
+ *                 type: string
+ *                 description: Title of the event.
+ *     responses:
+ *       200:
+ *         description: Event created successfully.
+ *       500:
+ *         description: Error creating event.
+ */
 // Create event on calendar
 app.post('/calendar/:calendarId', async (req, res) => {
   const calendarId = req.params.calendarId;
@@ -371,6 +645,41 @@ app.post('/calendar/:calendarId', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /calendarId/{calendarId}/events:
+ *   get:
+ *     summary: Read calendar events within a specific time range
+ *     description: Retrieves events from a specified calendar by ID within a given start and end time.
+ *     tags:
+ *          - Calendar
+ *     parameters:
+ *       - in: path
+ *         name: calendarId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: The ID of the calendar to retrieve events from.
+ *       - in: query
+ *         name: startTime
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *           description: Start time for filtering events.
+ *       - in: query
+ *         name: endTime
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *           description: End time for filtering events.
+ *     responses:
+ *       200:
+ *         description: Events retrieved successfully.
+ *       500:
+ *         description: Error retrieving events.
+ */
 // Read calendar event
 app.get('/calendarId/:calendarId/events', async (req, res) => {
   const calendarId = req.params.calendarId; // Extract the calendar ID from the URL parameter
@@ -395,6 +704,35 @@ app.get('/calendarId/:calendarId/events', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+// POST endpoint to get task statistics not fully fleshed out for admin access yet
+// still needs more work
+app.post('/task-statistics', async (req, res) => {
+  try {
+    // Example: Calculate the average work time and completion rate for tasks
+    const stats = await Task.aggregate([
+      {
+        $group: {
+          _id: null, // Group all tasks together
+          averageWorkTime: { $avg: "$work_time" },
+          completionRate: { 
+            $avg: { 
+              $cond: [ "$completed", 1, 0 ] // 1 for completed tasks, 0 for others
+            } 
+          }
+        }
+      }
+    ]);
+
+    res.status(200).json(stats);
+  } catch (error) {
+    console.error('Failed to calculate task statistics:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
