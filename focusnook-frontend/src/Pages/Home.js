@@ -5,6 +5,7 @@ import Collaboration from '../Components/Collaboration';
 import Calendar from '../Components/Calendar';
 import Themes from '../Components/Themes';
 import Account from '../Components/Account';
+import Tasks from '../Components/ToDoList';
 import SoundButton from '../Components/UtlityComponents/SoundButton';
 import TimeDisplay from '../Components/UtlityComponents/TimeDisplay';
 import { useNavigate, Navigate } from 'react-router-dom'; // Import Navigate
@@ -70,6 +71,8 @@ function HomePage() {
         return <Themes />;
       case 'account':
         return <Account />;
+      case 'to-do-list':
+        return <Tasks />;
 
 
       // ... cases for other components
