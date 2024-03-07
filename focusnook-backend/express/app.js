@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors'); // Require the CORS module
@@ -13,7 +14,23 @@ const Task = require('./Tasks');
 const app = express();
 const port = 2000;
 // define the Swagger JS DOC configuration
+const APIDocOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'FocusNook API',
+      version: '1.0.0',
+      description: 'An API for efficient task management and collaboration using express and MongoDB.',
+      servers: ['http://localhost:' + port]
+    },
+  },
+  apis: ['./express/app.js', './express/User.js', './express/Tasks.js'],
+};
 
+// initialize the swagger-jsdoc
+const APIDocs = swaggerJSdoc(APIDocOptions);
+
+const API_KEY = '';
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -67,6 +84,24 @@ app.use(cors({
       const newUser = await user.save();
       res.status(201).json({ userId: newUser._id });
     } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.put('/updateCalendarId/:id', async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { calendarId } = req.body;
+      // Make sure you are using the correct field name 'calendarId' as defined in your schema
+      const updatedUser = await User.findByIdAndUpdate(userId, { calendarId: calendarId }, { new: true });
+      
+      if (updatedUser) {
+        res.json(updatedUser);
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    } catch (error) {
+      console.error(error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -181,7 +216,7 @@ app.use(cors({
       res.status(500).json({ error: error.message });
     }
   });
-  
+
 
   /**
    * @swagger
@@ -451,21 +486,110 @@ app.put('/profile/default-theme', authenticateToken, async (req, res) => {
 });
 
 
-const APIDocOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'FocusNook API',
-      version: '1.0.0',
-      description: 'An API for efficient task management and collaboration using express and MongoDB.',
-      servers: ['http://localhost:' + port]
-    },
-  },
-  apis: ['./express/app.js', './express/User.js', './express/Tasks.js'],
-};
 
-// initialize the swagger-jsdoc
-const APIDocs = swaggerJSdoc(APIDocOptions);
+// Create calendar (unique to each user)
+app.post('/calendar/create', async (req, res) => {
+  const calendarOptions = {
+    method: 'POST',
+    url: 'https://calendar22.p.rapidapi.com/v1/calendars',
+    headers: {
+      'content-type': 'application/json',
+      'X-RapidAPI-Key': API_KEY, // Replace with your actual API key
+      'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
+    },
+    data: req.body // Pass through the client-provided data
+  };
+
+  try {
+    const response = await axios.request(calendarOptions);
+    res.status(201).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.get('/calendar/:calendarId', async (req, res) => {
+  const calendarId = req.params.calendarId; // Extract the calendar ID from the URL parameter
+
+  const options = {
+    method: 'GET',
+    url: `https://calendar22.p.rapidapi.com/v1/calendars/${calendarId}`,
+    headers: {
+      'X-RapidAPI-Key': API_KEY, // Replace this with your actual API key
+      'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create event on calendar
+app.post('/calendar/:calendarId', async (req, res) => {
+  const calendarId = req.params.calendarId;
+
+  const { startTime, endTime, title } = req.body;
+
+  const options = {
+    method: 'POST',
+    url: `https://calendar22.p.rapidapi.com/v1/calendars/${calendarId}/events`,
+    headers: {
+      'content-type': 'application/json',
+      'X-RapidAPI-Key': API_KEY,
+      'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
+    },
+    data: JSON.stringify({
+      startTime: startTime,
+      endTime: endTime,
+      title: title,
+    })
+  };
+  
+  try {
+    const response = await axios.request(options);
+    console.log(response.data);
+    res.json(response.data); // Send back the response from the API to the client
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred'); // Send a server error response to the client
+  }
+});
+
+// Read calendar event
+app.get('/calendarId/:calendarId/events', async (req, res) => {
+  const calendarId = req.params.calendarId; // Extract the calendar ID from the URL parameter
+  const { startTime, endTime } = req.query; // Should be req.query for GET requests
+
+  const options = {
+    method: 'GET',
+    url: `https://calendar22.p.rapidapi.com/v1/calendars/${calendarId}/events`,
+    params: {
+      startTime: startTime,
+      endTime: endTime
+    },
+    headers: {
+      'X-RapidAPI-Key': API_KEY,
+      'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
 // server swagger documentation
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(APIDocs));
 

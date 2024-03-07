@@ -19,15 +19,32 @@ function SignUp() {
     };
 
     axios.post('http://localhost:2000/register', userData)
-      .then(function (response) {
-        console.log('Success:', response.data);
-        navigate('/Login'); // Redirect to login page on successful registration
-      })
-      .catch(function (error) {
-        console.error('Error:', error);
-      });
+    .then(function (response) {
+      console.log('Registered User:', response.data);
+      const userId = response.data.userId; // Store user ID for later use
+        // Now call the calendar create endpoint
+        return axios.post('http://localhost:2000/calendar/create', /* necessary data for calendar creation */)
+        .then(function (calendarResponse) {
+        console.log('Calendar Created:', calendarResponse.data);
+        const calendarId = calendarResponse.data.id; // Retrieve calendar ID from the response
+       
+               // Make sure you're returning this for the next .then() in the chain
+        return { userId, calendarId }; // Return both _id and calendarId for the next step
+      }); 
+    }) 
+    .then(function (data) {
+      console.log('Data:', data);
+      return axios.put(`http://localhost:2000/updateCalendarId/${data.userId}`, {calendarId : data.calendarId});
+    })
+    .then(function (updateResponse) {
+      console.log('User updated with calendar ID:', updateResponse.data);
+      navigate('/login'); // Redirect to login page or dashboard
+    })
+    .catch(function (error) {
+      console.error('Error:', error);
+    });
   };
-
+    
   return (
     <div className='auth-form-container'>
       <div className='signup-container'>
