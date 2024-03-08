@@ -1,0 +1,72 @@
+.todo-list-wrapper {
+    display: flex; /* Flex container */
+    flex-direction: column; /* Stack title and container vertically */
+    align-items: center; /* Center items horizontally */
+    width: 80%; /* Set the width to 80% of the viewport */
+    max-width: 1000px; /* Set a max-width to keep the size consistent */
+    min-height: 500px; /* Minimum height for the container */
+    margin: 20px auto; /* Center the wrapper and provide space top and bottom */
+    padding: 20px;
+    border-radius: 8px;
+
+    overflow: hidden; /* Prevent horizontal scroll */
+}
+
+.todo-list-title {
+    text-align: center;
+    margin-top: 5px; /* Adjust this value to increase or decrease the top margin */
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.todo-list-container {
+    display: flex; /* Flex container */
+    width: 100%; /* Take the full width of the wrapper */
+    align-items: flex-start; /* Align children to the start of the cross axis */
+}
+
+.filter-buttons {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    margin-right: 50px; /* Right margin to separate from the task list */
+    margin-left: 130px;
+  
+}
+
+.filter-buttons button {
+    font-family: 'Varela Round', sans-serif;
+    background-color: #928cb893;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 20px 30px;
+    margin-bottom: 10px; /* Space between buttons */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+}
+
+.filter-buttons button:hover {
+    background-color: #8b8baa; /* Lighter green for hover */
+}
+
+.tasks-container {
+    flex: none; /* Don't grow to fill the space */
+    width: 50%; /* Set the width to 70% of the parent container or any value you prefer */
+    background-color: rgba(255, 255, 255, 0.466);
+    border: 1px solid #ccc; /* Outline the items list area */
+    border-radius: 8px; /* Optional: rounded corners for the outline */
+    padding: 10px;
+    overflow-y: auto;
+    height: 400px;
+}
+
+.task-item {
+    /* No change required unless you want to set a max-width */
+    max-width: 70%; /* Optional: Set a max-width if you want to limit how wide they can stretch */
+    margin: 10px 0;
+    margin-left: 50px;
+    /* Other styles */
+}
+
+

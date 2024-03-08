@@ -1,17 +1,19 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from "axios";
 import TopBar from '../Components/UtlityComponents/TopBar';
-import Collaboration from '../Components/Collaboration';
 import Calendar from '../Components/Calendar';
 import Themes from '../Components/Themes';
 import Account from '../Components/Account';
+import TodoList from '../Components/ToDoList';
+import AddNewTask from '../Components/AddNewTask';
 import SoundButton from '../Components/UtlityComponents/SoundButton';
 import TimeDisplay from '../Components/UtlityComponents/TimeDisplay';
-import { useNavigate, Navigate } from 'react-router-dom'; // Import Navigate
+import { useNavigate, Navigate, AbortedDeferredError } from 'react-router-dom'; // Import Navigate
 import Logo from '../assets/focusnook-logo.png';
 import '../styles/Home.css';
 import { useTheme } from '../contexts/ThemeContext';
 import { AuthContext } from "../contexts/AuthContext";
+
 
 
 
@@ -62,14 +64,16 @@ function HomePage() {
 
   const renderContent = () => {
     switch(activeTab) {
-      case 'collaboration':
-        return <Collaboration />;
+      case 'add-new-task':
+        return <AddNewTask />;
       case 'calendar':
         return <Calendar />;
       case 'themes':
         return <Themes />;
       case 'account':
         return <Account />;
+      case 'to-do-list':
+        return <TodoList />;
 
 
       // ... cases for other components

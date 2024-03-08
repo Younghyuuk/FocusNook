@@ -29,7 +29,6 @@ const APIDocOptions = {
 
 // initialize the swagger-jsdoc
 const APIDocs = swaggerJSdoc(APIDocOptions);
-
 const API_KEY = '';
 
 // Middleware to parse JSON bodies
@@ -94,7 +93,7 @@ app.use(cors({
       const { calendarId } = req.body;
       // Make sure you are using the correct field name 'calendarId' as defined in your schema
       const updatedUser = await User.findByIdAndUpdate(userId, { calendarId: calendarId }, { new: true });
-      
+
       if (updatedUser) {
         res.json(updatedUser);
       } else {
@@ -472,6 +471,7 @@ app.put('/tasks/:taskId', async (req, res) => {
  *       500:
  *         description: Internal Server Error
  */
+
 // Update user default theme route
 app.put('/profile/default-theme', authenticateToken, async (req, res) => {
   try {
@@ -484,6 +484,27 @@ app.put('/profile/default-theme', authenticateToken, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+// Retrieve user's calendar ID
+app.get('/profile/calendarId', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (user && user.calendarId) {
+      res.json({ calendarId: user.calendarId });
+    } else {
+      res.status(404).json({ error: 'Calendar ID not found for the user' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+//////////////////////CALENDAR SERVICES////////////////////////////
 
 
 /**
@@ -738,6 +759,139 @@ app.post('/task-statistics', async (req, res) => {
 
 // server swagger documentation
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(APIDocs));
+
+
+
+
+
+
+/////////////TASK SERVICES///////////////////////
+
+// Create new task
+app.post('/task', authenticateToken, async (req, res) => {
+  try {
+      const { completed, date_added, desc, dropped, work_time, start_date, due_date } = req.body;
+
+      // Create a new Task instance with the destructured fields
+      const task = new Task({
+          assigned_user: req.user.userId, // This should correctly reference the authenticated user's ID
+          completed,
+          date_added,
+          desc,
+          dropped,
+          work_time,
+          start_date,
+          due_date
+      });
+
+      // Save the new Task to the database
+      await task.save();
+
+      // Respond with the newly created Task
+      res.status(201).json(task);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+// drop a task
+app.patch('/task/drop/:taskId', authenticateToken, async (req, res) => {
+  try {
+      const updatedTask = await Task.findOneAndUpdate(
+          { _id: req.params.taskId, assigned_user: req.user.userId },
+          { dropped: true },
+          { new: true }
+      );
+      if (!updatedTask) {
+          return res.status(404).json({ error: 'Task not found or unauthorized' });
+      }
+      res.json(updatedTask);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+// add work time 
+app.patch('/task/worktime/:taskId', authenticateToken, async (req, res) => {
+  try {
+      const { additionalTime } = req.body;
+      const task = await Task.findOne({ _id: req.params.taskId, assigned_user: req.user.userId });
+      if (!task) {
+          return res.status(404).json({ error: 'Task not found or unauthorized' });
+      }
+      task.work_time += additionalTime;
+      await task.save();
+      res.json(task);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+// mark as complete 
+app.patch('/task/complete/:taskId', authenticateToken, async (req, res) => {
+  try {
+      const updatedTask = await Task.findOneAndUpdate(
+          { _id: req.params.taskId, assigned_user: req.user.userId },
+          { completed: true },
+          { new: true }
+      );
+      if (!updatedTask) {
+          return res.status(404).json({ error: 'Task not found or unauthorized' });
+      }
+      res.json(updatedTask);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+
+// Service to get tasks due today
+app.get('/tasks/today', authenticateToken, async (req, res) => {
+  try {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0); // set to start of today in UTC
+    const tomorrow = new Date(today);
+    tomorrow.setUTCDate(today.getUTCDate() + 1); // set to start of tomorrow in UTC
+
+    const tasks = await Task.find({
+      assigned_user: req.user.userId,
+      completed: false,
+      dropped: false,
+      due_date: {
+        $gte: today.toISOString(), // tasks due on or after the start of today
+        $lt: tomorrow.toISOString(), // but before the start of tomorrow
+      },
+    });
+
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Service to get tasks due one week from today
+app.get('/tasks/nextweek', authenticateToken, async (req, res) => {
+  try {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0); // set to start of today in UTC
+    const nextWeek = new Date(today);
+    nextWeek.setUTCDate(today.getUTCDate() + 7); // set to exactly one week from now in UTC
+
+    const tasks = await Task.find({
+      assigned_user: req.user.userId,
+      completed: false,
+      dropped: false,
+      due_date: {
+        $gte: today.toISOString(), // tasks due on or after today
+        $lt: nextWeek.toISOString(), // and before one week from now
+      },
+    });
+
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
   
 // Listen on the configured port

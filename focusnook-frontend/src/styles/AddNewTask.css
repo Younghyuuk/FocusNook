@@ -1,0 +1,93 @@
+.add-task-main-container {
+    position: relative;
+    width: 500px;
+    margin: auto;
+    padding: 20px;
+    margin-top: 10px;
+    border-radius: 10px;
+    z-index: 10;
+}
+
+.add-task-container {
+    margin-top: 55px; /* Add margin-top to create a gap between t1 and the form */
+}
+
+.add-task-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+}
+
+.add-task-container label {
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 1rem;
+    display: block; /* Ensure labels are block level to avoid wrapping */
+}
+
+/* Adjust input styles to match the label width */
+.add-task-container input[type="email"],
+.add-task-container input[type="password"],
+.add-task-container input[type="text"],
+.add-task-container input[type="date"] {
+    width: calc(100% - 20px); /* Full width minus padding */
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Update form-group to handle alignment and spacing */
+.form-group {
+    width: 100%; /* Ensuring full width */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    margin-bottom: 10px; /* Space between form groups */
+}
+
+.message-container {
+    min-height: 40px;
+    margin-bottom: 10px;
+}
+
+.add-task-container button {
+    font-family: 'Varela Round', sans-serif;
+    padding: 10px 20px;
+    background-color: #a2bda4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%; /* Full width button */
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.add-task-container button:hover {
+    background-color: #728073;
+}
+
+.error-message {
+    margin: 0px;
+    color: red;
+    text-align: left;
+}
+
+.success-message {
+    margin: 0px;
+    color: rgb(109, 129, 109);
+    text-align: left;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
