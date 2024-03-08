@@ -3,10 +3,12 @@ import axios from 'axios';
 import TaskItem from '../UtlityComponents/TaskItem'; // Make sure to create this component
 import { AuthContext } from '../../contexts/AuthContext';
 import '../../styles/ToDoListRoom.css';
+import { useSelectedTask } from './SelectedTaskContext';
 
 function ToDoListRoom() {
   const { authToken } = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
+  const { selectedTaskId, setSelectedTaskId } = useSelectedTask();
   
   useEffect(() => {
     // Define the timeframe as 'nextweek' since we want tasks for this week
@@ -28,15 +30,25 @@ function ToDoListRoom() {
     }
   };
 
+  const handleTaskSelection = (taskId) => {
+    setSelectedTaskId(taskId);
+  };
+
   return (
-  <div className="todo-container">
-    <div className="task-items-wrapper">
+    <div className="todo-container">
+      <div className="task-items-wrapper">
         {tasks.map((task) => (
-            <TaskItem key={task._id} task={task} fetchTasks={() => fetchTasks('nextweek')} />
+          // Pass handleTaskSelection to TaskItem
+          <TaskItem
+            key={task._id}
+            task={task}
+            onSelect={() => handleTaskSelection(task._id)}
+            isSelected={selectedTaskId === task._id} // Pass isSelected prop to highlight the selected task
+            fetchTasks={() => fetchTasks('nextweek')}
+          />
         ))}
+      </div>
     </div>
-</div>
   );
 }
-
 export default ToDoListRoom;

@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from "axios";
-import Calendar from '../Components/Calendar';
 import SoundButton from '../Components/UtlityComponents/SoundButton';
 import TimeDisplay from '../Components/UtlityComponents/TimeDisplay';
 import Timer from '../Components/UtlityComponents/Timer';
@@ -9,7 +8,7 @@ import '../styles/Room.css';
 import { useTheme } from '../contexts/ThemeContext';
 import { AuthContext } from "../contexts/AuthContext";
 import ToDoListRoom from '../Components/UtlityComponents/ToDoListRoom';
-
+import { SelectedTaskProvider } from '../Components/UtlityComponents/SelectedTaskContext';
 
 
 /**
@@ -57,8 +56,10 @@ function Room() {
        <button className="exit-button" onClick={handleExitClick}>&lt;- Exit Room</button>
        <button className="task-button" onClick={handleTaskClick}> {showTasks ? 'Hide Tasks' : 'Show Tasks'} </button>
        </div>
-        {showTasks && <ToDoListRoom />}
-        <Timer />
+       <SelectedTaskProvider>
+      {showTasks && <ToDoListRoom />}
+      <Timer />
+    </SelectedTaskProvider>
         <SoundButton />
         <TimeDisplay />
       </div>

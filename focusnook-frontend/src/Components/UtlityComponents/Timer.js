@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/Timer.css'; 
+import axios from "axios";
+import { useSelectedTask } from './SelectedTaskContext';
+import { AuthContext } from '../../contexts/AuthContext';
 
 function Timer() {
     const [showOptions, setShowOptions] = useState(false); // New state for showing/hiding options
@@ -7,50 +10,83 @@ function Timer() {
     const [remainingTime, setRemainingTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [intervalId, setIntervalId] = useState(null);
+    const [startTime, setStartTime] = useState(null);
+    const { selectedTaskId } = useSelectedTask();
+    const { authToken } = useContext(AuthContext);
   
     useEffect(() => {
-        // Only set up the interval when the timer is running
-        if (isRunning) {
-          const id = setInterval(() => {
-            setRemainingTime((prevTime) => {
-              if (prevTime <= 1) {
-                clearInterval(id);
-                setIsRunning(false);
-                setShowOptions(false);
-                return 0;
+      if (isRunning) {
+        // Set up the interval
+        const id = setInterval(() => {
+          setRemainingTime((prevTime) => {
+            if (prevTime <= 1) {
+              clearInterval(intervalId); // Clear using intervalId from the state
+              setIsRunning(false);
+              setShowOptions(false);
+              if (selectedTaskId) { // Check if selectedTaskId is not null
+                const timeSpent = duration; // prevTime is <= 1, so we can use duration
+                updateTaskWorkTime(selectedTaskId, timeSpent); // Log the time spent on the current task
               }
-              return prevTime - 1;
-            });
-          }, 1000);
-      
-          // Clear this interval when the effect re-runs or the component unmounts
-          return () => clearInterval(id);
+              return 0;
+            }
+            return prevTime - 1;
+          });
+        }, 1000);
+        setIntervalId(id); // Save the interval ID to the state
+      }
+      // Clean up function
+      return () => {
+        if (intervalId) {
+          clearInterval(intervalId); // Clear using intervalId from the state
         }
-      }, [isRunning]);
+      };
+    }, [isRunning]); // Removed intervalId, duration, selectedTaskId from dependencies
+    
   
-    const startTimer = (time) => {
-      setDuration(time);
-      setRemainingTime(time);
-      setIsRunning(true);
-      setShowOptions(false); // Hide options once the timer starts
-    };
-  
-    const pauseTimer = () => {
-      setIsRunning(false);
-      clearInterval(intervalId);
-    };
+      const startTimer = (time) => {
+        const now = new Date(); // Get the current time
+        setStartTime(now);      // Set the start time
+        setDuration(time);
+        setRemainingTime(time);
+        setIsRunning(true);
+        setShowOptions(false);  // Hide options once the timer starts
+      };
+      
+      const pauseTimer = () => {
+        clearInterval(intervalId); // Use intervalId from state
+        setIsRunning(false);
+        const now = new Date(); 
+        console.log(selectedTaskId);
+        if (startTime && selectedTaskId) { // Ensure startTime and selectedTaskId are not null
+          const timeSpent = Math.floor((now - startTime) / 1000);
+          updateTaskWorkTime(selectedTaskId, timeSpent);
+        }
+      };
   
     const resetTimer = () => {
+      clearInterval(intervalId);
       setIsRunning(false);
       setRemainingTime(0);
       setDuration(0);
-      clearInterval(intervalId);
     };
   
     const formatTime = (seconds) => {
       const mins = Math.floor(seconds / 60);
       const secs = seconds % 60;
       return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    };
+
+    const updateTaskWorkTime = async (taskId, additionalTime) => {
+      try {
+        const response = await axios.patch(`http://localhost:2000/task/worktime/${taskId}`, {
+          additionalTime
+        }, {
+          headers: { Authorization: `Bearer ${authToken}` }
+        });
+        console.log('Task work time updated:', response.data);
+      } catch (error) {
+        console.error('Error updating task work time:', error);
+      }
     };
   
     return (

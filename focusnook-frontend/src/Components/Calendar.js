@@ -146,9 +146,10 @@ const generateMatrix = () => {
                   {cell.day !== -1 ? cell.day : ''}
                   {/* Render the event title if there is an event */}
                   {cell.event && (
-                    <div className="event">
-                      {cell.event.title}
-                    </div>
+                     <div className="event">
+                     {cell.event.title.slice(0, 6)}
+                     {cell.event.title.length > 10 ? "..." : ""}
+                   </div>
                   )}
                 </td>
               );

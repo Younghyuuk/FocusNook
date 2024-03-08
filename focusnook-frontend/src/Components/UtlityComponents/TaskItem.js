@@ -4,8 +4,9 @@ import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 import '../../styles/TaskItem.css';; // Your CSS file for styling
 
-function TaskItem({ task, fetchTasks, filter }) {
+function TaskItem({ task, fetchTasks, filter, onSelect, isSelected }) {
   const { authToken } = useContext(AuthContext);
+  const taskItemClasses = `task-item ${isSelected ? 'selected' : ''}`;
 
   const markAsComplete = async (taskId) => {
     try {
@@ -39,16 +40,31 @@ function TaskItem({ task, fetchTasks, filter }) {
     timeZone: 'UTC',
   });
 
+  const handleActionButtonClick = (e, action) => {
+    e.stopPropagation(); // Prevent click from bubbling up and triggering onSelect
+    action(task._id);
+  };
+
   return (
-    <div className="task-item">
-      <div className="task-details">
+    <div className={taskItemClasses}>
+      <div className="task-details" onClick={() => onSelect(task._id)}>
         <h3>{task.desc}</h3>
         <p>Start: {localStartDate}</p>
         <p>Due: {localDueDate}</p>
       </div>
       <div className="task-actions">
-        <button className="complete" onClick={() => markAsComplete(task._id)}>✓</button>
-        <button className="delete" onClick={() => deleteTask(task._id)}>✘</button>
+        <button
+          className="complete"
+          onClick={(e) => handleActionButtonClick(e, markAsComplete)}
+        >
+          ✓
+        </button>
+        <button
+          className="delete"
+          onClick={(e) => handleActionButtonClick(e, deleteTask)}
+        >
+          ✘
+        </button>
       </div>
     </div>
   );
