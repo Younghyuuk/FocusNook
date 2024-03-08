@@ -75,6 +75,11 @@ function Account() {
         updatedData.username = name;
       }
 
+      // Check if email notification preference has changed
+    if (emailNotification !== profileResponse.data.notification) {
+      updatedData.notification = emailNotification;
+    }
+
       // Call the update service only if there are updated fields
       if (Object.keys(updatedData).length > 0) {
         const response = await axios.put(
