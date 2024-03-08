@@ -28,7 +28,7 @@ const APIDocOptions = {
 
 // initialize the swagger-jsdoc
 const APIDocs = swaggerJSdoc(APIDocOptions);
-const API_KEY = '';
+const API_KEY = '6d697e17bemsh23ac8508c747fa5p111f3cjsn161b91147f24';
 
 // Middleware to parse JSON bodies
 app.use(express.json());
