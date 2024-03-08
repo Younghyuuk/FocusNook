@@ -14,24 +14,28 @@ function ToDoListRoom() {
   }, []); // The empty array ensures this effect runs once after the initial render
 
   const fetchTasks = async (timeframe) => {
-    // Since the timeframe is always 'nextweek', we use a static endpoint
     const endpoint = '/tasks/nextweek';
     try {
       const response = await axios.get(`http://localhost:2000${endpoint}`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      setTasks(response.data);
+      const sortedTasks = response.data.sort((a, b) => 
+        new Date(a.due_date) - new Date(b.due_date)
+      );
+      setTasks(sortedTasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
   };
 
   return (
-    <div className="todo-container">
-      {tasks.map((task) => (
-        <TaskItem key={task._id} task={task} fetchTasks={() => fetchTasks('nextweek')} />
-      ))}
+  <div className="todo-container">
+    <div className="task-items-wrapper">
+        {tasks.map((task) => (
+            <TaskItem key={task._id} task={task} fetchTasks={() => fetchTasks('nextweek')} />
+        ))}
     </div>
+</div>
   );
 }
 

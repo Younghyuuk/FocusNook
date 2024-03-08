@@ -19,8 +19,9 @@ function TodoList() {
       const response = await axios.get(`http://localhost:2000${endpoint}`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      console.log(response.data);
-      setTasks(response.data);
+      // Sort tasks by due date
+      const sortedTasks = response.data.sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+      setTasks(sortedTasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }

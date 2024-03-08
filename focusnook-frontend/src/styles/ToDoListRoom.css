@@ -1,6 +1,4 @@
 .todo-container {
-    content: '';
-    display: block;
     position: absolute;
     width: 400px;
     height: 600px;
@@ -9,8 +7,22 @@
     background-color: rgba(228, 216, 216, 0.781); 
     z-index: 5; 
     border-radius: 10px; 
+    padding: 20px; 
+    box-sizing: border-box; 
+    padding-left: 0px;
+    padding-right: 0px;
+
+}
+
+.task-items-wrapper {
+    overflow-y: auto; 
+    height: 100%; 
+    border-radius: 8px; 
+    padding-right: 0px; 
+    padding-left: 0px;
 }
 
 .task-item {
- margin-top: 20px; /* Add space between tasks */
+    margin-top: 20px; 
+
 }
