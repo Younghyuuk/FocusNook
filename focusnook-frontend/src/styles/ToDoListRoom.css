@@ -1,12 +1,16 @@
-    .todo-container {
-        content: '';
-        display: block;
-        position: absolute;
-        width: 300px;
-        height: 600px;
-        top: 17%;
-        right: 1%;
-        background-color: rgba(228, 216, 216, 0.781); 
-        z-index: 5; 
-        border-radius: 10px; 
-    }
+.todo-container {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 400px;
+    height: 600px;
+    top: 17%;
+    right: 1%;
+    background-color: rgba(228, 216, 216, 0.781); 
+    z-index: 5; 
+    border-radius: 10px; 
+}
+
+.task-item {
+ margin-top: 20px; /* Add space between tasks */
+}

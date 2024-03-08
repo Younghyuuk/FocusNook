@@ -11,10 +11,6 @@ const taskSchema = new mongoose.Schema({
     required: true,
     default: false,
   },
-  date_added: {
-    type: String,
-    required: true,
-  },
   desc: {
     type: String,
     required: true,

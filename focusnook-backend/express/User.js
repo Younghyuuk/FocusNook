@@ -35,6 +35,11 @@ const userSchema = new mongoose.Schema({
   notification: {
     type: Boolean,
     default: true
+  },
+  calendarId: {
+    type: String,
+    unique: true,
+    default: null
   }
 });
 

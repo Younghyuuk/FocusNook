@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors'); // Require the CORS module
@@ -28,6 +29,7 @@ const APIDocOptions = {
 
 // initialize the swagger-jsdoc
 const APIDocs = swaggerJSdoc(APIDocOptions);
+const API_KEY = '6d697e17bemsh23ac8508c747fa5p111f3cjsn161b91147f24';
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -81,6 +83,24 @@ app.use(cors({
       const newUser = await user.save();
       res.status(201).json({ userId: newUser._id });
     } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.put('/updateCalendarId/:id', async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const { calendarId } = req.body;
+      // Make sure you are using the correct field name 'calendarId' as defined in your schema
+      const updatedUser = await User.findByIdAndUpdate(userId, { calendarId: calendarId }, { new: true });
+
+      if (updatedUser) {
+        res.json(updatedUser);
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    } catch (error) {
+      console.error(error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -195,7 +215,7 @@ app.use(cors({
       res.status(500).json({ error: error.message });
     }
   });
-  
+
 
   /**
    * @swagger
@@ -277,70 +297,133 @@ app.put('/profile/default-theme', authenticateToken, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+// Retrieve user's calendar ID
+app.get('/profile/calendarId', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (user && user.calendarId) {
+      res.json({ calendarId: user.calendarId });
+    } else {
+      res.status(404).json({ error: 'Calendar ID not found for the user' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+//////////////////////CALENDAR SERVICES////////////////////////////
+
+// Create calendar (unique to each user)
+app.post('/calendar/create', async (req, res) => {
+  const calendarOptions = {
+    method: 'POST',
+    url: 'https://calendar22.p.rapidapi.com/v1/calendars',
+    headers: {
+      'content-type': 'application/json',
+      'X-RapidAPI-Key': API_KEY, // Replace with your actual API key
+      'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
+    },
+    data: req.body // Pass through the client-provided data
+  };
+
+  try {
+    const response = await axios.request(calendarOptions);
+    res.status(201).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.get('/calendar/:calendarId', async (req, res) => {
+  const calendarId = req.params.calendarId; // Extract the calendar ID from the URL parameter
+
+  const options = {
+    method: 'GET',
+    url: `https://calendar22.p.rapidapi.com/v1/calendars/${calendarId}`,
+    headers: {
+      'X-RapidAPI-Key': API_KEY, // Replace this with your actual API key
+      'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create event on calendar
+app.post('/calendar/:calendarId', async (req, res) => {
+  const calendarId = req.params.calendarId;
+
+  const { startTime, endTime, title } = req.body;
+
+  const options = {
+    method: 'POST',
+    url: `https://calendar22.p.rapidapi.com/v1/calendars/${calendarId}/events`,
+    headers: {
+      'content-type': 'application/json',
+      'X-RapidAPI-Key': API_KEY,
+      'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
+    },
+    data: JSON.stringify({
+      startTime: startTime,
+      endTime: endTime,
+      title: title,
+    })
+  };
+  
+  try {
+    const response = await axios.request(options);
+    console.log(response.data);
+    res.json(response.data); // Send back the response from the API to the client
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred'); // Send a server error response to the client
+  }
+});
+
+// Read calendar event
+app.get('/calendarId/:calendarId/events', async (req, res) => {
+  const calendarId = req.params.calendarId; // Extract the calendar ID from the URL parameter
+  const { startTime, endTime } = req.query; // Should be req.query for GET requests
+
+  const options = {
+    method: 'GET',
+    url: `https://calendar22.p.rapidapi.com/v1/calendars/${calendarId}/events`,
+    params: {
+      startTime: startTime,
+      endTime: endTime
+    },
+    headers: {
+      'X-RapidAPI-Key': API_KEY,
+      'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // server swagger documentation
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(APIDocs));
 
 
 
-
-
-// POST /tasks: Create a new task
-app.post('/tasks', async (req, res) => {
-  try {
-    const taskData = req.body;
-    const newTask = await Task.create(taskData);
-    res.status(201).json(newTask);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// GET /tasks: Retrieve a list of all tasks for a user
-app.get('/tasks', async (req, res) => {
-  try {
-    const allTasks = await Task.find();
-    res.status(200).json(allTasks);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// DELETE /tasks/{taskId}: Delete a task
-app.delete('/tasks/:taskId', async (req, res) => {
-  const taskId = req.params.taskId;
-
-  try {
-    const deletedTask = await Task.findByIdAndDelete(taskId);
-
-    if (!deletedTask) {
-      return res.status(404).json({ error: 'Task not found' });
-    }
-
-    res.status(200).json(deletedTask);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-app.put('/tasks/:taskId', async (req, res) => {
-  const taskId = req.params.taskId;
-
-  try {
-    const updatedTask = await Task.findByIdAndUpdate(taskId, req.body, { new: true });
-
-    if (!updatedTask) {
-      return res.status(404).json({ message: 'Task not found' });
-    }
-
-    res.json(updatedTask);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
 
 
 
@@ -420,6 +503,55 @@ app.patch('/task/complete/:taskId', authenticateToken, async (req, res) => {
       res.json(updatedTask);
   } catch (error) {
       res.status(500).json({ error: error.message });
+  }
+});
+
+
+// Service to get tasks due today
+app.get('/tasks/today', authenticateToken, async (req, res) => {
+  try {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0); // set to start of today in UTC
+    const tomorrow = new Date(today);
+    tomorrow.setUTCDate(today.getUTCDate() + 1); // set to start of tomorrow in UTC
+
+    const tasks = await Task.find({
+      assigned_user: req.user.userId,
+      completed: false,
+      dropped: false,
+      due_date: {
+        $gte: today.toISOString(), // tasks due on or after the start of today
+        $lt: tomorrow.toISOString(), // but before the start of tomorrow
+      },
+    });
+
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Service to get tasks due one week from today
+app.get('/tasks/nextweek', authenticateToken, async (req, res) => {
+  try {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0); // set to start of today in UTC
+    const nextWeek = new Date(today);
+    nextWeek.setUTCDate(today.getUTCDate() + 7); // set to exactly one week from now in UTC
+
+    const tasks = await Task.find({
+      assigned_user: req.user.userId,
+      completed: false,
+      dropped: false,
+      due_date: {
+        $gte: today.toISOString(), // tasks due on or after today
+        $lt: nextWeek.toISOString(), // and before one week from now
+      },
+    });
+
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 

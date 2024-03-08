@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from "axios";
-import Collaboration from '../Components/Collaboration';
 import Calendar from '../Components/Calendar';
 import SoundButton from '../Components/UtlityComponents/SoundButton';
 import TimeDisplay from '../Components/UtlityComponents/TimeDisplay';
