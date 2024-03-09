@@ -730,13 +730,44 @@ app.get('/calendarId/:calendarId/events', async (req, res) => {
 
 
 
+/**
+ * @swagger
+ * /task-statistics:
+ *   post:
+ *     summary: Retrieves aggregated task statistics
+ *     description: Returns the average work time and completion rate for tasks, along with the total number of users in the system. Intended for admin use.
+ *     tags:
+ *          - Statistics
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved task statistics.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 taskStatistics:
+ *                   type: object
+ *                   properties:
+ *                     averageWorkTime:
+ *                       type: number
+ *                       description: The average work time for all tasks.
+ *                     completionRate:
+ *                       type: number
+ *                       description: The average completion rate for all tasks.
+ *                 totalUsers:
+ *                   type: number
+ *                   description: The total number of users in the system.
+ *       500:
+ *         description: Internal server error.
+ */
 
 // POST endpoint to get task statistics not fully fleshed out for admin access yet
 // still needs more work
 app.post('/task-statistics', async (req, res) => {
   try {
     // Example: Calculate the average work time and completion rate for tasks
-    const stats = await Task.aggregate([
+    const taskStats = await Task.aggregate([
       {
         $group: {
           _id: null, // Group all tasks together
@@ -749,7 +780,11 @@ app.post('/task-statistics', async (req, res) => {
         }
       }
     ]);
-
+    const totalUsers = await User.countDocuments();
+    const stats = {
+      taskStatistics: taskStats.length > 0 ? taskStats[0] : {},
+      totalUsers
+    };
     res.status(200).json(stats);
   } catch (error) {
     console.error('Failed to calculate task statistics:', error);
@@ -766,7 +801,46 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(APIDocs));
 
 
 /////////////TASK SERVICES///////////////////////
-
+/**
+ * @swagger
+ * /task:
+ *   post:
+ *     summary: Create new task
+ *     description: Allows authenticated users to create a new task.
+ *     tags:
+ *          - Tasks
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               completed:
+ *                 type: boolean
+ *               date_added:
+ *                 type: string
+ *                 format: date-time
+ *               desc:
+ *                 type: string
+ *               dropped:
+ *                 type: boolean
+ *               work_time:
+ *                 type: number
+ *               start_date:
+ *                 type: string
+ *                 format: date-time
+ *               due_date:
+ *                 type: string
+ *                 format: date-time
+ *     responses:
+ *       201:
+ *         description: Task created successfully.
+ *       500:
+ *         description: Internal Server Error
+ */
 // Create new task
 app.post('/task', authenticateToken, async (req, res) => {
   try {
@@ -794,6 +868,30 @@ app.post('/task', authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /task/drop/{taskId}:
+ *   patch:
+ *     summary: Drop a task
+ *     description: Allows authenticated users to mark a task as dropped.
+ *     tags:
+ *          - Tasks
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Task dropped successfully.
+ *       404:
+ *         description: Task not found or unauthorized
+ *       500:
+ *         description: Internal Server Error
+ */
 // drop a task
 app.patch('/task/drop/:taskId', authenticateToken, async (req, res) => {
   try {
@@ -811,6 +909,39 @@ app.patch('/task/drop/:taskId', authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /task/worktime/{taskId}:
+ *   patch:
+ *     summary: Add work time to a task
+ *     description: Allows authenticated users to add additional work time to a task.
+ *     tags:
+ *          - Tasks  
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               additionalTime:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Work time added successfully.
+ *       404:
+ *         description: Task not found or unauthorized
+ *       500:
+ *         description: Internal Server Error
+ */
 // add work time 
 app.patch('/task/worktime/:taskId', authenticateToken, async (req, res) => {
   try {
@@ -827,6 +958,30 @@ app.patch('/task/worktime/:taskId', authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /task/complete/{taskId}:
+ *   patch:
+ *     summary: Mark a task as complete
+ *     description: Allows authenticated users to mark a task as complete.
+ *     tags:
+ *         - Tasks
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Task marked as complete successfully.
+ *       404:
+ *         description: Task not found or unauthorized
+ *       500:
+ *         description: Internal Server Error
+ */
 // mark as complete 
 app.patch('/task/complete/:taskId', authenticateToken, async (req, res) => {
   try {
@@ -844,7 +999,22 @@ app.patch('/task/complete/:taskId', authenticateToken, async (req, res) => {
   }
 });
 
-
+/**
+ * @swagger
+ * /tasks/today:
+ *   get:
+ *     summary: Get tasks due today
+ *     description: Retrieve all tasks assigned to the authenticated user that are due today.
+ *     tags:
+ *         - Tasks
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Tasks retrieved successfully.
+ *       500:
+ *         description: Internal Server Error
+ */
 // Service to get tasks due today
 app.get('/tasks/today', authenticateToken, async (req, res) => {
   try {
@@ -869,6 +1039,22 @@ app.get('/tasks/today', authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /tasks/nextweek:
+ *   get:
+ *     summary: Get tasks due next week
+ *     description: Retrieve all tasks assigned to the authenticated user that are due within the next week.
+ *     tags:
+ *         - Tasks 
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Tasks retrieved successfully.
+ *       500:
+ *         description: Internal Server Error
+ */
 // Service to get tasks due one week from today
 app.get('/tasks/nextweek', authenticateToken, async (req, res) => {
   try {
