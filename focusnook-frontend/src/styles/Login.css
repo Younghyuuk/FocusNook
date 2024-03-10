@@ -19,26 +19,26 @@
       right: 0;
       bottom: 0;
       left: 0;
-      background: rgba(0, 0, 0, 0.6); /* Black with 50% opacity */
-      z-index: 1; /* Ensure it sits above the background image */
+      background: rgba(0, 0, 0, 0.6); 
+      z-index: 1; 
   }
   
   .logo-container {
-    position: relative; /* Make sure forms are positioned in the stacking context */
-    z-index: 2; /* Higher z-index to ensure forms sit above the overlay */
+    position: relative; 
+    z-index: 2; 
   }
   
   .login-form, .signup-form {
     color: white;
-    position: relative; /* Make sure forms are positioned in the stacking context */
-    z-index: 2; /* Higher z-index to ensure forms sit above the overlay */
+    position: relative; 
+    z-index: 2; 
     display: flex;
     flex-direction: column;
   }
 
   .signup-text, .login-text {
-    position: relative; /* Make sure forms are positioned in the stacking context */
-    z-index: 2; /* Higher z-index to ensure forms sit above the overlay */
+    position: relative; 
+    z-index: 2; 
     color:white;
   }
   
@@ -72,5 +72,5 @@
     margin-top: 10px;
 }
 a:visited {
-  color: rgb(255, 204, 248); /* Match this color to the one used in a:link to prevent color change */
+  color: rgb(255, 204, 248); 
 }

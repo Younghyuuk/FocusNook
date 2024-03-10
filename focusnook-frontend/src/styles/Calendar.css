@@ -1,6 +1,6 @@
 #calendar-container {
-    height: 600px;
-    width: 750px; /* Increased from 350px */
+    height: 590px;
+    width: 750px;
     margin: auto;
     border: 1px solid #ddd;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
@@ -19,7 +19,7 @@
   header button {
     background: none;
     border: none;
-    font-size: 2em; /* Increased font size for buttons */
+    font-size: 2em;
     cursor: pointer;
   }
   
@@ -32,11 +32,11 @@
   
   .calendar td {
     border: 1px solid #ddd;
-    padding: 20px; /* Increased padding for cells */
-    vertical-align: top; /* Align content to the top of the cell */
+    padding: 20px; 
+    vertical-align: top; 
     text-align: left;  
     cursor: pointer;
-    font-size: 1.0em; /* Increased font size for dates */
+    font-size: 1.0em; 
   }
   
   .calendar td.dayOfWeek {
@@ -47,8 +47,8 @@
     background-color: #f0f0f0;
   }
   .event {
-    background-color: #f7d7d2; /* Example background color */
-    color: #000000; /* Example text color */
+    background-color: #f7d7d2; 
+    color: #000000; 
     margin-top: 2px;
     border-radius: 4px;
     text-align: center;
