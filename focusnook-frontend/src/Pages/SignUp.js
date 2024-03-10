@@ -7,11 +7,20 @@ import Logo from '../assets/focusnook-logo.png';
 function SignUp() {
   const [Email, setEmail] = useState('');
   const [Pass, setPass] = useState('');
+  const [PassConfirm, setPassConfirm] = useState(''); 
   const [Username, setUName] = useState('');
+  const [errorMsg, setErrorMsg] = useState(''); 
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission
+    // Check if passwords match
+    if (Pass !== PassConfirm) {
+      setErrorMsg('Passwords do not match.'); // Set error message
+      return; // Prevent form submission
+    }
+    setErrorMsg(''); // Clear any previous error messages
+
     const userData = {
       email: Email,
       password: Pass,
@@ -42,6 +51,7 @@ function SignUp() {
     })
     .catch(function (error) {
       console.error('Error:', error);
+      setErrorMsg('Sign up failed. Check if email is not already in use or try again later.');
     });
   };
     
@@ -56,8 +66,11 @@ function SignUp() {
           <input value={Email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Enter an email"/>
           <label htmlFor="Password">* Password</label>
           <input value={Pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="Enter a password" id="Password" name="Password"/>
+          <label htmlFor="ConfirmPassword">* Confirm Password</label>
+          <input value={PassConfirm} onChange={(e) => setPassConfirm(e.target.value)} type="password" placeholder="Re-enter your password" id="ConfirmPassword" name="ConfirmPassword"/>
           <label htmlFor="Username">* Username</label>
           <input value={Username} onChange={(e) => setUName(e.target.value)} type="text" placeholder="Enter username (can be changed later)"/>
+          {errorMsg && <div className="error-message">{errorMsg}</div>}
           <button type="submit">Register</button>
         </form>
 

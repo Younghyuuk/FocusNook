@@ -73,3 +73,9 @@
 .task-item button.delete:hover {
     background-color: #db7b74; /* Lighter red for hover */
 }
+
+.task-item.selected {
+    background-color: #f0f0f0; /* or any color you like */
+    border-left: 4px solid #007bff; /* a blue left border for selection */
+    /* Other styling as desired */
+  }

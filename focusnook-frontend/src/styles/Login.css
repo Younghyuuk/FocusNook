@@ -67,3 +67,10 @@
     color: white;
     text-decoration: underline;
   }
+  .error-message {
+    color: red;
+    margin-top: 10px;
+}
+a:visited {
+  color: rgb(255, 204, 248); /* Match this color to the one used in a:link to prevent color change */
+}
