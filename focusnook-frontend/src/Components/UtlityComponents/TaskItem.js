@@ -45,7 +45,8 @@ function TaskItem({ task, fetchTasks, filter, onSelect, isSelected }) {
           } catch (error) {
             throw new Error('Failed to delete event');
           }
-      };  
+      }; 
+
   const markAsComplete = async (taskId) => {
     try {
       await axios.patch(`http://localhost:2000/task/complete/${taskId}`, {}, {

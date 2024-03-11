@@ -35,7 +35,6 @@ const taskSchema = new mongoose.Schema({
   },
   eventId: {
     type: String,
-    unique: true,
     default: null,
   },
 });

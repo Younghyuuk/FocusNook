@@ -39,16 +39,15 @@ function AddNewTask() {
       const formattedEndDate = `${newTask.due_date}T00:00:01Z`;
       console.log(formattedStartDate);
       console.log(formattedEndDate);
+      console.log(newTask.desc);
       try {
         const response = await axios.post(`http://localhost:2000/calendar/${calendarId}`, {
           startTime: formattedStartDate,
           endTime: formattedEndDate,
           title: newTask.desc,
-        }, {
-          headers: { Authorization: `Bearer ${authToken}` },
         });
         console.log('Task added to calendar successfully.');
-        return response.data.eventId;
+        return response.data.id;
       } catch (error) {
         throw new Error('Failed to add task to calendar');
       }
@@ -86,7 +85,7 @@ if (new Date(startDate) >= new Date(dueDate)) {
           desc: taskDesc,
           dropped: false,
           start_date: startDate,
-          due_date: dueDate
+          due_date: dueDate,
         };
   
         // Create the task
@@ -95,12 +94,14 @@ if (new Date(startDate) >= new Date(dueDate)) {
         });
         const newTaskId = taskResponse.data._id; 
         console.log(newTaskId);
+
+
         // Retrieve the user's calendar ID
         const calendarId = await getCalendarId();
-  
+        console.log(calendarId);
         // Add the task to the user's calendar
         const eventId = await addToCalendar(calendarId, newTask);
-
+        console.log(eventId);
         await updateEventId(newTaskId, eventId)
   
         // Task added successfully

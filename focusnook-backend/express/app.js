@@ -30,7 +30,7 @@ const APIDocOptions = {
 // initialize the swagger-jsdoc
 const APIDocs = swaggerJSdoc(APIDocOptions);
 // for calendar api
-const API_KEY = '2ef9e48b14msh0f53342d5f51c25p1ffd1ajsn30c4826ef1a7';
+const API_KEY = '';
 // for email api
 const EMAIL_API_KEY = '';
 
@@ -601,8 +601,7 @@ app.get('/calendar/:calendarId', async (req, res) => {
  */
 // Create event on calendar
 app.post('/calendar/:calendarId', async (req, res) => {
-  const calendarId = req.params.calendarId;
-
+  const { calendarId } = req.params;
   const { startTime, endTime, title } = req.body;
 
   const options = {
@@ -619,7 +618,7 @@ app.post('/calendar/:calendarId', async (req, res) => {
       title: title,
     })
   };
-  
+
   try {
     const response = await axios.request(options);
     console.log(response.data);
@@ -629,6 +628,8 @@ app.post('/calendar/:calendarId', async (req, res) => {
     res.status(500).send('An error occurred'); // Send a server error response to the client
   }
 });
+
+
 
 /**
  * @swagger
@@ -694,7 +695,7 @@ app.get('/calendarId/:calendarId/events', async (req, res) => {
 /**
  * @swagger
  * /calendarId/{calendarId}/:eventId:
- *   get:
+ *   delete:
  *     summary: Delete event from calendar
  *     description: Delete event from calendar using the event id
  *     tags:
@@ -729,15 +730,15 @@ app.delete('/calendarId/:calendarId/:eventId', async (req, res) => {
     url: `https://calendar22.p.rapidapi.com/v1/calendars/${calendarId}/events/${eventId}`,
     headers: {
       'content-type': 'application/json',
-      'X-RapidAPI-Key': '2ef9e48b14msh0f53342d5f51c25p1ffd1ajsn30c4826ef1a7',
+      'X-RapidAPI-Key': API_KEY,
       'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
     },
     data: {}
   };
   
   try {
-    const response = await axios.request(options);
-    console.log(response.data);
+    const res = await axios.request(options);
+    console.log(res.data);
   } catch (error) {
     console.error(error);
   }
@@ -867,9 +868,9 @@ app.post('/task', authenticateToken, async (req, res) => {
           dropped,
           work_time,
           start_date,
-          due_date
+          due_date,
       });
-
+      console.log(task);
       // Save the new Task to the database
       await task.save();
       // Increment the ongoing_tasks counter for the user
