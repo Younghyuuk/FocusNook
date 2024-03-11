@@ -1,11 +1,15 @@
 #calendar-container {
-    max-width: 600px; /* Increased from 350px */
+    height: 590px;
+    width: 750px;
     margin: auto;
     border: 1px solid #ddd;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
   }
   
   header {
+    font-family: 'Varela Round', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
     display: flex;
     justify-content: space-between;
     background: #f3f3f3;
@@ -15,37 +19,39 @@
   header button {
     background: none;
     border: none;
-    font-size: 2em; /* Increased font size for buttons */
+    font-size: 2em;
     cursor: pointer;
   }
   
   .calendar {
     width: 100%;
+    height: 80%;
+    table-layout: fixed;
     border-collapse: collapse;
   }
   
   .calendar td {
     border: 1px solid #ddd;
-    padding: 20px; /* Increased padding for cells */
-    text-align: center;
+    padding: 20px; 
+    vertical-align: top; 
+    text-align: left;  
     cursor: pointer;
-    font-size: 1.2em; /* Increased font size for dates */
+    font-size: 1.0em; 
   }
   
   .calendar td.dayOfWeek {
-    font-weight: bold;
-    font-size: 1.2em; /* Increased font size for day of the week */
+    height: 0px;
   }
   
   .calendar td:hover {
     background-color: #f0f0f0;
   }
   .event {
-    background-color: #eaeaea; /* Example background color */
-    color: #333; /* Example text color */
-    padding: 4px;
+    background-color: #f7d7d2; 
+    color: #000000; 
     margin-top: 2px;
     border-radius: 4px;
     text-align: center;
+    font-size: 10px;
   }
   

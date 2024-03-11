@@ -101,16 +101,16 @@
 
 .close-button {
   position: absolute;
-  top: -10px; /* Adjust the value as needed */
-  right: 20px; /* Adjust the value as needed */
+  top: -10px; 
+  right: 20px; 
   background: transparent;
   border: none;
   font-size: 50px;
-  color: white; /* You can change the color as needed */
+  color: white;
   cursor: pointer;
-  z-index: 10; /* Ensure it is above other content */
+  z-index: 10; 
 }
 
 .close-button:hover {
-  color: #eee9e9; /* Lighter shade when hovered for a nice effect */
+  color: #eee9e9; 
 }

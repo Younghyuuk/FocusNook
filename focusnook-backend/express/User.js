@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
     default: null
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
   }
 });
 
