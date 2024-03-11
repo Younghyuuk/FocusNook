@@ -11,8 +11,11 @@ function Timer() {
     const [isRunning, setIsRunning] = useState(false);
     const [intervalId, setIntervalId] = useState(null);
     const [startTime, setStartTime] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
     const { selectedTaskId } = useSelectedTask();
+    console.log(selectedTaskId);
     const { authToken } = useContext(AuthContext);
+    
   
     useEffect(() => {
       if (isRunning) {
@@ -42,7 +45,11 @@ function Timer() {
       };
     }, [isRunning]); // Removed intervalId, duration, selectedTaskId from dependencies
     
-  
+    useEffect(() => {
+      // Reset the timer whenever the selectedTaskId changes
+      resetTimer();
+    }, [selectedTaskId]);
+
       const startTimer = (time) => {
         const now = new Date(); // Get the current time
         setStartTime(now);      // Set the start time
@@ -89,10 +96,22 @@ function Timer() {
       }
     };
   
+    const handleSetTimerClick = () => {
+      if (!selectedTaskId) {
+          // If no task is selected, set the error message and do not show options
+          setErrorMessage('Please select a task before setting the timer.');
+      } else {
+          // If a task is selected, clear any existing error messages and show options
+          setErrorMessage('');
+          setShowOptions(true);
+      }
+  };
+
     return (
       <div className="timer">
+       {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Display error message if present */}
         {!isRunning && duration === 0 && !showOptions && (
-          <button className= "set-timer-btn" onClick={() => setShowOptions(true)}>SET TIMER</button>
+          <button className= "set-timer-btn" onClick={handleSetTimerClick}>SET TIMER</button>
         )}
         <div className="timer-options">
         {!isRunning && showOptions && (

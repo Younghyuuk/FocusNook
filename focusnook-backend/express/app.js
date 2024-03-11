@@ -29,7 +29,10 @@ const APIDocOptions = {
 
 // initialize the swagger-jsdoc
 const APIDocs = swaggerJSdoc(APIDocOptions);
+// for calendar api
 const API_KEY = '';
+// for email api
+const EMAIL_API_KEY = '';
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -72,6 +75,18 @@ app.use(cors({
  *         500:
  *           description: Internal server error
  */
+
+app.get('/users/count', async (req, res) => {
+  try {
+    // Assuming User is a Mongoose model you've already defined
+    const count = await User.countDocuments(); // Mongoose method to count documents
+    res.json({ count: count });
+  } catch (err) {
+    console.error(err.stack); // More detailed error logging
+    res.status(500).send('Error connecting to the database or counting documents.');
+  }
+});
+
   app.post('/register', async (req, res) => {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -83,24 +98,6 @@ app.use(cors({
       const newUser = await user.save();
       res.status(201).json({ userId: newUser._id });
     } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
-  app.put('/updateCalendarId/:id', async (req, res) => {
-    try {
-      const userId = req.params.id;
-      const { calendarId } = req.body;
-      // Make sure you are using the correct field name 'calendarId' as defined in your schema
-      const updatedUser = await User.findByIdAndUpdate(userId, { calendarId: calendarId }, { new: true });
-
-      if (updatedUser) {
-        res.json(updatedUser);
-      } else {
-        res.status(404).json({ error: "User not found" });
-      }
-    } catch (error) {
-      console.error(error);
       res.status(500).json({ error: error.message });
     }
   });
@@ -337,6 +334,23 @@ app.get('/profile/calendarId', authenticateToken, async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.put('/profile/calendarId/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { calendarId } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(userId, { calendarId: calendarId }, { new: true });
+
+    if (updatedUser) {
+      res.json(updatedUser);
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -934,16 +948,16 @@ app.post('/register-email', async(req,res) => {
     url: 'https://mail-sender-api1.p.rapidapi.com/',
     headers: {
       'content-type': 'application/json',
-      'X-RapidAPI-Key': '',
+      'X-RapidAPI-Key': EMAIL_API_KEY,
       'X-RapidAPI-Host': 'mail-sender-api1.p.rapidapi.com'
     },
     data: {
       sendto: req.body.email,
-      name: req.body.username,
+      name: 'FocusNook',
       replyTo: 'focusnook68@gmail.com',
       ishtml: 'false',
       title: 'Welcome to FocusNook',
-      body: 'Hello, we are thrilled to welcome you to FocusNook, your personalized productivity companion. FocusNook is designed to help you manage tasks, stay organized, and boost your productivity effortlessly if you have any questions please email focusnook68@gmail.com'
+      body: 'Hello ' + req.body.username + ', ' + 'we are thrilled to welcome you to FocusNook, your personalized productivity companion. FocusNook is designed to help you manage tasks, stay organized, and boost your productivity effortlessly if you have any questions please email focusnook68@gmail.com'
     }
   };
   
