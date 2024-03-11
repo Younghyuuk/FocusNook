@@ -123,81 +123,6 @@ app.get('/users/count', async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
-
-
-  /**
- * @swagger
- * /updateCalendarId/{id}:
- *   put:
- *     summary: Update a user's calendar ID
- *     description: Updates the specified user's calendar ID.
- *     tags:
- *         - Calendar
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The user ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               calendarId:
- *                 type: string
- *                 description: The new calendar ID to be updated for the user
- *     responses:
- *       200:
- *         description: User's calendar ID updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       404:
- *         description: User not found
- *       500:
- *         description: Internal server error
- *
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       properties:
- *         _id:
- *           type: string
- *           description: The user ID
- *         username:
- *           type: string
- *         email:
- *           type: string
- *         password:
- *           type: string
- *         calendarId:
- *           type: string
- *           description: The calendar ID associated with the user
- */
-
-  app.put('/updateCalendarId/:id', async (req, res) => {
-    try {
-      const userId = req.params.id;
-      const { calendarId } = req.body;
-      // Make sure you are using the correct field name 'calendarId' as defined in your schema
-      const updatedUser = await User.findByIdAndUpdate(userId, { calendarId: calendarId }, { new: true });
-
-      if (updatedUser) {
-        res.json(updatedUser);
-      } else {
-        res.status(404).json({ error: "User not found" });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: error.message });
-    }
-  });
   
   
   /**
@@ -387,7 +312,7 @@ app.get('/users/count', async (req, res) => {
  *     summary: Update user's default theme
  *     description: Allows authenticated users to update their default theme.
  *     tags:
- *          - Theme
+ *          - User
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -426,7 +351,7 @@ app.put('/profile/default-theme', authenticateToken, async (req, res) => {
  *     summary: Retrieve the calendar ID associated with the user's profile
  *     description: Fetch the calendar ID from the authenticated user's profile.
  *     tags:
- *          - Calendar
+ *          - User
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -463,6 +388,79 @@ app.get('/profile/calendarId', authenticateToken, async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+  /**
+ * @swagger
+ * /profile/calendarId/{id}:
+ *   put:
+ *     summary: Update a user's calendar ID
+ *     description: Updates the specified user's calendar ID.
+ *     tags:
+ *         - User
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               calendarId:
+ *                 type: string
+ *                 description: The new calendar ID to be updated for the user
+ *     responses:
+ *       200:
+ *         description: User's calendar ID updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ *
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The user ID
+ *         username:
+ *           type: string
+ *         email:
+ *           type: string
+ *         password:
+ *           type: string
+ *         calendarId:
+ *           type: string
+ *           description: The calendar ID associated with the user
+ */
+app.put('/profile/calendarId/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { calendarId } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(userId, { calendarId: calendarId }, { new: true });
+
+    if (updatedUser) {
+      res.json(updatedUser);
+    } else {
+      res.status(404).json({ error: "User not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -1110,6 +1108,7 @@ app.post('/register-email', async(req,res) => {
   };
   
   try {
+    console.log(options.data.sendto);
     const response = await axios.request(options);
     res.status(200).json({ message: 'Emails sent successfully' });
     console.log(response.data);
