@@ -10,28 +10,38 @@ function SignUp() {
   const [PassConfirm, setPassConfirm] = useState(''); 
   const [Username, setUName] = useState('');
   const [errorMsg, setErrorMsg] = useState(''); 
+  const [apiCalls, setApiCalls] = useState(0);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission
-    // Check if passwords match
-    if (Pass !== PassConfirm) {
-      setErrorMsg('Passwords do not match.'); // Set error message
-      return; // Prevent form submission
-    }
-    setErrorMsg(''); // Clear any previous error messages
 
-    const userData = {
-      email: Email,
-      password: Pass,
-      username: Username,
-    };
+    axios.get('http://localhost:2000/users/count')
+    .then(response => {
+      const totalUsers = response.data.count; // Access the count directly from response.data
+      setApiCalls(totalUsers); // Correctly call the setter function
+    
+    
+      if (apiCalls < 10) {
+        // Check if passwords match
+        if (Pass !== PassConfirm) {
+          setErrorMsg('Passwords do not match.'); // Set error message
+          return; // Prevent further execution
+        }
+        setErrorMsg(''); // Clear any previous error messages
+
+        const userData = {
+          email: Email,
+          password: Pass,
+          username: Username,
+        };
 
     axios.post('http://localhost:2000/register', userData)
     .then(function (response) {
       console.log('Registered User:', response.data);
       const userId = response.data.userId; // Store user ID for later use
         // Now call the calendar create endpoint
+        
         return axios.post('http://localhost:2000/calendar/create', /* necessary data for calendar creation */)
         .then(function (calendarResponse) {
         console.log('Calendar Created:', calendarResponse.data);
@@ -53,8 +63,18 @@ function SignUp() {
       console.error('Error:', error);
       setErrorMsg('Sign up failed. Check if email is not already in use or try again later.');
     });
+    } else {
+      // Block registration and inform the user
+      setErrorMsg('Registration is currently closed due to reaching the maximum number of users.');
+    }
+    })
+    .catch(error => {
+      console.error('Error fetching user count:', error);
+      setErrorMsg('Unable to verify user count. Please try again later.');
+    });
   };
-    
+  
+
   return (
     <div className='auth-form-container'>
       <div className='signup-container'>

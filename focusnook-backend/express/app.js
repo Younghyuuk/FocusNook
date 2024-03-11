@@ -72,6 +72,18 @@ app.use(cors({
  *         500:
  *           description: Internal server error
  */
+
+app.get('/users/count', async (req, res) => {
+  try {
+    // Assuming User is a Mongoose model you've already defined
+    const count = await User.countDocuments(); // Mongoose method to count documents
+    res.json({ count: count });
+  } catch (err) {
+    console.error(err.stack); // More detailed error logging
+    res.status(500).send('Error connecting to the database or counting documents.');
+  }
+});
+
   app.post('/register', async (req, res) => {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
