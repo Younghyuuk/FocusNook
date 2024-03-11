@@ -39,19 +39,33 @@ function AddNewTask() {
       const formattedEndDate = `${newTask.due_date}T00:00:01Z`;
       console.log(formattedStartDate);
       console.log(formattedEndDate);
+      console.log(newTask.desc);
       try {
-        await axios.post(`http://localhost:2000/calendar/${calendarId}`, {
+        const response = await axios.post(`http://localhost:2000/calendar/${calendarId}`, {
           startTime: formattedStartDate,
           endTime: formattedEndDate,
           title: newTask.desc,
-        }, {
-          headers: { Authorization: `Bearer ${authToken}` },
         });
         console.log('Task added to calendar successfully.');
+        return response.data.id;
       } catch (error) {
         throw new Error('Failed to add task to calendar');
       }
     };
+
+        // Function to update an eventId in tasks
+        const updateEventId = async (taskId, eventId) => {
+          try {
+            await axios.patch(`http://localhost:2000/task/event/${taskId}`, {
+              eventId : eventId
+            }, {
+              headers: { Authorization: `Bearer ${authToken}` },
+            });
+            console.log('Task updated event id successfully.');
+          } catch (error) {
+            throw new Error('Failed to update event id');
+          }
+        };
 
     const handleAddTask = async (e) => {
       e.preventDefault();
@@ -71,19 +85,24 @@ if (new Date(startDate) >= new Date(dueDate)) {
           desc: taskDesc,
           dropped: false,
           start_date: startDate,
-          due_date: dueDate
+          due_date: dueDate,
         };
   
         // Create the task
-        await axios.post('http://localhost:2000/task', newTask, {
-          headers: { Authorization: `Bearer ${authToken}` },
+        const taskResponse = await axios.post('http://localhost:2000/task', newTask, {
+        headers: { Authorization: `Bearer ${authToken}` },
         });
-  
+        const newTaskId = taskResponse.data._id; 
+        console.log(newTaskId);
+
+
         // Retrieve the user's calendar ID
         const calendarId = await getCalendarId();
-  
+        console.log(calendarId);
         // Add the task to the user's calendar
-        await addToCalendar(calendarId, newTask);
+        const eventId = await addToCalendar(calendarId, newTask);
+        console.log(eventId);
+        await updateEventId(newTaskId, eventId)
   
         // Task added successfully
         setStatusMessage('Task added successfully!');
