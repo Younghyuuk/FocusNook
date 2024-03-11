@@ -297,166 +297,6 @@ app.get('/users/count', async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /tasks:
- *   post:
- *     summary: Create a new task
- *     description: Allows the creation of a new task with given details.
- *     tags:
- *          - Tasks
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               dueDate:
- *                 type: string
- *                 format: date
- *               status:
- *                 type: string
- *     responses:
- *       201:
- *         description: Task created successfully.
- *       500:
- *         description: Internal Server Error
- */
-// POST /tasks: Create a new task
-app.post('/tasks', async (req, res) => {
-  try {
-    const taskData = req.body;
-    const newTask = await Task.create(taskData);
-    res.status(201).json(newTask);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-/**
- * @swagger
- * /tasks:
- *   get:
- *     summary: Retrieve all tasks
- *     description: Fetches a list of all tasks.
- *     tags:
- *          - Tasks
- *     responses:
- *       200:
- *         description: A list of tasks.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Task'
- *       500:
- *         description: Internal Server Error
- */
-// GET /tasks: Retrieve a list of all tasks for a user
-app.get('/tasks', async (req, res) => {
-  try {
-    const allTasks = await Task.find();
-    res.status(200).json(allTasks);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-/**
- * @swagger
- * /tasks/{taskId}:
- *   delete:
- *     summary: Delete a task
- *     description: Deletes a task based on the task ID.
- *     tags:
- *          - Tasks
- *     parameters:
- *       - in: path
- *         name: taskId
- *         required: true
- *         description: Unique ID of the task to delete.
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Task deleted successfully.
- *       404:
- *         description: Task not found.
- *       500:
- *         description: Internal Server Error
- */
-// DELETE /tasks/{taskId}: Delete a task
-app.delete('/tasks/:taskId', async (req, res) => {
-  const taskId = req.params.taskId;
-
-  try {
-    const deletedTask = await Task.findByIdAndDelete(taskId);
-
-    if (!deletedTask) {
-      return res.status(404).json({ error: 'Task not found' });
-    }
-
-    res.status(200).json(deletedTask);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-/**
- * @swagger
- * /tasks/{taskId}:
- *   put:
- *     summary: Update a task
- *     description: Updates the details of an existing task based on the task ID.
- *     tags:
- *          - Tasks
- *     parameters:
- *       - in: path
- *         name: taskId
- *         required: true
- *         description: Unique ID of the task to update.
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Task'
- *     responses:
- *       200:
- *         description: Task updated successfully.
- *       404:
- *         description: Task not found.
- *       500:
- *         description: Internal Server Error
- */
-app.put('/tasks/:taskId', async (req, res) => {
-  const taskId = req.params.taskId;
-
-  try {
-    const updatedTask = await Task.findByIdAndUpdate(taskId, req.body, { new: true });
-
-    if (!updatedTask) {
-      return res.status(404).json({ message: 'Task not found' });
-    }
-
-    res.json(updatedTask);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
-
 
 /**
  * @swagger
@@ -773,9 +613,6 @@ app.get('/calendarId/:calendarId/events', async (req, res) => {
  *       500:
  *         description: Internal server error.
  */
-
-// POST endpoint to get task statistics not fully fleshed out for admin access yet
-// still needs more work
 app.post('/task-statistics', async (req, res) => {
   try {
     // Example: Calculate the average work time and completion rate for tasks
@@ -872,7 +709,8 @@ app.post('/task', authenticateToken, async (req, res) => {
 
       // Save the new Task to the database
       await task.save();
-
+      // Increment the ongoing_tasks counter for the user
+      await User.findByIdAndUpdate(req.user.userId, { $inc: { ongoing_tasks: 1 } })
       // Respond with the newly created Task
       res.status(201).json(task);
   } catch (error) {
@@ -915,6 +753,12 @@ app.patch('/task/drop/:taskId', authenticateToken, async (req, res) => {
       if (!updatedTask) {
           return res.status(404).json({ error: 'Task not found or unauthorized' });
       }
+
+      // Task was dropped successfully, now update the user's task counts
+      await User.findByIdAndUpdate(req.user.userId, { 
+          $inc: { ongoing_tasks: -1, dropped_tasks: 1 }
+      });
+
       res.json(updatedTask);
   } catch (error) {
       res.status(500).json({ error: error.message });
@@ -1005,6 +849,10 @@ app.patch('/task/complete/:taskId', authenticateToken, async (req, res) => {
       if (!updatedTask) {
           return res.status(404).json({ error: 'Task not found or unauthorized' });
       }
+
+      await User.findByIdAndUpdate(req.user.userId, { 
+        $inc: { ongoing_tasks: -1, completed_tasks: 1 }
+    });
       res.json(updatedTask);
   } catch (error) {
       res.status(500).json({ error: error.message });
@@ -1090,6 +938,37 @@ app.get('/tasks/nextweek', authenticateToken, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+app.post('/register-email', async(req,res) => {
+  const options = {
+    method: 'POST',
+    url: 'https://mail-sender-api1.p.rapidapi.com/',
+    headers: {
+      'content-type': 'application/json',
+      'X-RapidAPI-Key': '6655f8f112msh34d276bcee5bf53p1e0fdfjsn2d67cc011b10',
+      'X-RapidAPI-Host': 'mail-sender-api1.p.rapidapi.com'
+    },
+    data: {
+      sendto: req.body.email,
+      name: req.body.username,
+      replyTo: 'focusnook68@gmail.com',
+      ishtml: 'false',
+      title: 'Welcome to FocusNook',
+      body: 'Hello, we are thrilled to welcome you to FocusNook, your personalized productivity companion. FocusNook is designed to help you manage tasks, stay organized, and boost your productivity effortlessly if you have any questions please email focusnook68@gmail.com'
+    }
+  };
+  
+  try {
+    const response = await axios.request(options);
+    res.status(200).json({ message: 'Emails sent successfully' });
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+
+})
 
   
 // Listen on the configured port

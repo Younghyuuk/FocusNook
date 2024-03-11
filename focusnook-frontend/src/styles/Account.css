@@ -4,10 +4,30 @@
     margin: auto;
     padding: 20px;
     margin-top: 10px;
-    border-radius: 10px;
     z-index: 10; 
   }
   
+  .content-container {
+    display: flex;
+    justify-content: space-around; 
+    align-items: flex-start; 
+    gap: 70px; 
+  }
+  
+  .account-container {
+    flex: 3;
+    min-width: 300px; 
+  }
+  
+  .tasks-section {
+    flex: 1; 
+    text-align: left;
+  }
+
+  .tasks-section h3 {
+    margin-top: 0px;
+  }
+
   .account-container form {
     display: flex;
     flex-direction: column;
@@ -79,16 +99,7 @@
     color: rgb(109, 129, 109);
     text-align: left;
   }
-  
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
+
 
   .logout-button-container {
     position: absolute;

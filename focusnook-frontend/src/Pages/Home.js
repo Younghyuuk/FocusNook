@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import axios from "axios";
 import TopBar from '../Components/UtlityComponents/TopBar';
+import Statistics from '../Components/Statistics';
 import Calendar from '../Components/Calendar';
 import Themes from '../Components/Themes';
 import Account from '../Components/Account';
@@ -23,25 +24,30 @@ import { AuthContext } from "../contexts/AuthContext";
 function HomePage() {
   const [activeTab, setActiveTab] = useState(''); // Default to no tab
   const { backgroundClass, changeCurrTheme } = useTheme();
+  const [isAdmin, setIsAdmin] = useState(false); 
   const { authToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
   
   useEffect(() => {
-    const fetchDefaultTheme = async () => {
+    const fetchProfileAndTheme = async () => {
       try {
         const response = await axios.get("http://localhost:2000/profile", {
           headers: { Authorization: `Bearer ${authToken}` },
         });
-        const defaultTheme = response.data.default_theme; // Assuming default_theme is returned from the backend
-        changeCurrTheme(defaultTheme); // Update the current theme
+        const userProfile = response.data;
+        changeCurrTheme(userProfile.default_theme); // Update the current theme
+        setIsAdmin(userProfile.isAdmin); // Update the admin status
       } catch (error) {
-        console.error("Error fetching default theme:", error);
+        console.error("Error fetching user profile:", error);
       }
     };
 
-    fetchDefaultTheme();
+    if (authToken) {
+      fetchProfileAndTheme();
+    }
   }, [authToken]);
+
 
 
   //If authToken is not present, redirect to login page
@@ -74,9 +80,9 @@ function HomePage() {
         return <Account />;
       case 'to-do-list':
         return <TodoList />;
+      case 'statistics':
+        return <Statistics />;
 
-
-      // ... cases for other components
       default:
         return null; // Return nothing if no tab is active
     }
@@ -89,7 +95,7 @@ function HomePage() {
   return (
     <div className="home-page" >
        <div className={`home-container ${backgroundClass}`}>
-        <TopBar setActiveTab={setActiveTab} />
+        <TopBar setActiveTab={setActiveTab} isAdmin={isAdmin} />
         
         {/* Render the permanent content only if there is no active tab */}
         {!activeTab && (
