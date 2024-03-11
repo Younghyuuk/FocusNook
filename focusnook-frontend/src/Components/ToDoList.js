@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import axios from 'axios';
-import TaskItem from '../Components/UtlityComponents/TaskItem'; // Make sure to create this component
-import '../styles/TodoList.css'; // Your CSS file for styling
+import TaskItem from '../Components/UtlityComponents/TaskItem';
+import '../styles/TodoList.css';
 
 function TodoList() {
   const { authToken } = useContext(AuthContext);

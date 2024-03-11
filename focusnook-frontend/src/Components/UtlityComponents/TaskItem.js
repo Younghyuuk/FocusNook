@@ -8,12 +8,53 @@ function TaskItem({ task, fetchTasks, filter, onSelect, isSelected }) {
   const { authToken } = useContext(AuthContext);
   const taskItemClasses = `task-item ${isSelected ? 'selected' : ''}`;
 
+  // Function to get the user's calendar ID
+  const getCalendarId = async () => {
+    try {
+      const response = await axios.get('http://localhost:2000/profile/calendarId', {
+          headers: { Authorization: `Bearer ${authToken}` },
+          });
+          console.log('Calendar ID retrieved successfully.');
+          console.log(response.data.calendarId);
+          return response.data.calendarId;
+        } catch (error) {
+          throw new Error('Failed to retrieve calendar ID');
+        }
+    };
+
+    // Function to get the tasks event ID
+    const getEventId = async (taskId) => {
+      try {
+        const response = await axios.get(`http://localhost:2000/task/event/${taskId}`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+            });
+            console.log('Event ID retrieved successfully.');
+            console.log(response.data.eventId);
+            return response.data.eventId;
+          } catch (error) {
+            throw new Error('Failed to retrieve event ID');
+          }
+      }; 
+
+    // Function to delete event associated with task
+    const deleteEvent = async (calendarId, eventId) => {
+      try {
+         await axios.delete(`http://localhost:2000/calendarId/${calendarId}/${eventId}`,
+            );
+            console.log('Event deleted successfully.');
+          } catch (error) {
+            throw new Error('Failed to delete event');
+          }
+      };  
   const markAsComplete = async (taskId) => {
     try {
       await axios.patch(`http://localhost:2000/task/complete/${taskId}`, {}, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       fetchTasks(filter);
+      const calendarId = await getCalendarId();
+      const eventId = await getEventId(taskId);
+      await deleteEvent(calendarId, eventId);
     } catch (error) {
       console.error('Error marking task as complete:', error);
     }
@@ -25,6 +66,9 @@ function TaskItem({ task, fetchTasks, filter, onSelect, isSelected }) {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       fetchTasks(filter);
+      const calendarId = await getCalendarId();
+      const eventId = await getEventId(taskId);
+      await deleteEvent(calendarId, eventId);
     } catch (error) {
       console.error('Error deleting task:', error);
     }

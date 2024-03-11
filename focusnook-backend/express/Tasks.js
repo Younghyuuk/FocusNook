@@ -33,6 +33,11 @@ const taskSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  eventId: {
+    type: String,
+    unique: true,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model('Task', taskSchema);

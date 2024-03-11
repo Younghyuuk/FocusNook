@@ -30,7 +30,7 @@ const APIDocOptions = {
 // initialize the swagger-jsdoc
 const APIDocs = swaggerJSdoc(APIDocOptions);
 // for calendar api
-const API_KEY = '';
+const API_KEY = '2ef9e48b14msh0f53342d5f51c25p1ffd1ajsn30c4826ef1a7';
 // for email api
 const EMAIL_API_KEY = '';
 
@@ -582,6 +582,57 @@ app.get('/calendarId/:calendarId/events', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+/**
+ * @swagger
+ * /calendarId/{calendarId}/:eventId:
+ *   get:
+ *     summary: Delete event from calendar
+ *     description: Delete event from calendar using the event id
+ *     tags:
+ *          - Calendar
+ *     parameters:
+ *       - in: path
+ *         name: calendarId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: The ID of the calendar to retrieve events from.
+ *       - in: path
+ *         name: eventId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: string
+ *           description: The ID of the event to be deleted.
+ *     responses:
+ *       200:
+ *         description: Event deleted successfully.
+ *       500:
+ *         description: Error deleting event.
+ */
+// Delete event from calendar
+app.delete('/calendarId/:calendarId/:eventId', async (req, res) => {
+  const calendarId = req.params.calendarId; // Extract the calendar ID from the URL parameter
+  const eventId = req.params.eventId
+
+  const options = {
+    method: 'DELETE',
+    url: `https://calendar22.p.rapidapi.com/v1/calendars/${calendarId}/events/${eventId}`,
+    headers: {
+      'content-type': 'application/json',
+      'X-RapidAPI-Key': '2ef9e48b14msh0f53342d5f51c25p1ffd1ajsn30c4826ef1a7',
+      'X-RapidAPI-Host': 'calendar22.p.rapidapi.com'
+    },
+    data: {}
+  };
+  
+  try {
+    const response = await axios.request(options);
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 
 
@@ -812,6 +863,91 @@ app.patch('/task/worktime/:taskId', authenticateToken, async (req, res) => {
       task.work_time += additionalTime;
       await task.save();
       res.json(task);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+/**
+ * @swagger
+ * /task/event/{taskId}:
+ *   patch:
+ *     summary: Add eventId to task
+ *     description: Update the eventId field in tasks
+ *     tags:
+ *          - Tasks  
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               eventId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: eventId updated successfully.
+ *       404:
+ *         description: Task not found or unauthorized
+ *       500:
+ *         description: Internal Server Error
+ */
+// Update event id
+app.patch('/task/event/:taskId', authenticateToken, async (req, res) => {
+  try {
+      const { eventId } = req.body;
+      const task = await Task.findOne({ _id: req.params.taskId, assigned_user: req.user.userId });
+      if (!task) {
+          return res.status(404).json({ error: 'Task not found or unauthorized' });
+      }
+      task.eventId = eventId;
+      await task.save();
+      res.json(task);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+/**
+ * @swagger
+ * /task/event/{taskId}:
+ *   get:
+ *     summary: Get eventId of task
+ *     description: Retrieve the event id of the specific task
+ *     tags:
+ *          - Tasks  
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Event id retrieved successfully.
+ *       404:
+ *         description: Task not found or unauthorized
+ *       500:
+ *         description: Internal Server Error
+ */
+// Get event id
+app.get('/task/event/:taskId', authenticateToken, async (req, res) => {
+  try {
+      const task = await Task.findOne({ _id: req.params.taskId, assigned_user: req.user.userId });
+      if (!task) {
+          return res.status(404).json({ error: 'Task not found or unauthorized' });
+      }
+      await task.save();
+      res.json({ eventId: task.eventId });
   } catch (error) {
       res.status(500).json({ error: error.message });
   }
