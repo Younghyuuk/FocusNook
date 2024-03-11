@@ -36,6 +36,11 @@ function SignUp() {
           username: Username,
         };
 
+        const mailOptions = {
+          email: Email,
+          username: Username,
+        };
+
     axios.post('http://localhost:2000/register', userData)
     .then(function (response) {
       console.log('Registered User:', response.data);
@@ -56,14 +61,14 @@ function SignUp() {
       return axios.put(`http://localhost:2000/updateCalendarId/${data.userId}`, {calendarId : data.calendarId});
     })
     .then(function (updateResponse) {
-      console.log("User updated with calendar ID:", updateResponse.data);
-      // Call the mail-sending API
-      return axios.post("http://localhost:2000/register-email", mailOptions);
-    })
-    .then(function (emailResponse) {
-      console.log("Welcome email sent:", emailResponse.data);
-      navigate("/login"); // Redirect to login page or dashboard
-    })
+        console.log("User updated with calendar ID:", updateResponse.data);
+        // Call the mail-sending API
+        return axios.post("http://localhost:2000/register-email", mailOptions);
+      })
+      .then(function (emailResponse) {
+        console.log("Welcome email sent:", emailResponse.data);
+        navigate("/login"); // Redirect to login page or dashboard
+      })
     .catch(function (error) {
       console.error('Error:', error);
       setErrorMsg('Sign up failed. Check if email is not already in use or try again later.');
