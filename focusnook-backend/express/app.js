@@ -934,7 +934,7 @@ app.post('/register-email', async(req,res) => {
     url: 'https://mail-sender-api1.p.rapidapi.com/',
     headers: {
       'content-type': 'application/json',
-      'X-RapidAPI-Key': '6655f8f112msh34d276bcee5bf53p1e0fdfjsn2d67cc011b10',
+      'X-RapidAPI-Key': '',
       'X-RapidAPI-Host': 'mail-sender-api1.p.rapidapi.com'
     },
     data: {
@@ -948,6 +948,7 @@ app.post('/register-email', async(req,res) => {
   };
   
   try {
+    console.log(options.data.sendto);
     const response = await axios.request(options);
     res.status(200).json({ message: 'Emails sent successfully' });
     console.log(response.data);
