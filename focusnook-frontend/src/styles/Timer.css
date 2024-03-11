@@ -91,3 +91,10 @@
     left: 55%; 
     transform: translate(-50%, -50%);
   }
+  .error-message {
+    font-family: 'Varela Round', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgb(194, 38, 38);
+    background-color: rgb(255, 255, 255, 0.9);
+  }
