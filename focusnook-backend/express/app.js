@@ -29,7 +29,10 @@ const APIDocOptions = {
 
 // initialize the swagger-jsdoc
 const APIDocs = swaggerJSdoc(APIDocOptions);
+// for calendar api
 const API_KEY = '';
+// for email api
+const EMAIL_API_KEY = '';
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -946,16 +949,16 @@ app.post('/register-email', async(req,res) => {
     url: 'https://mail-sender-api1.p.rapidapi.com/',
     headers: {
       'content-type': 'application/json',
-      'X-RapidAPI-Key': '6655f8f112msh34d276bcee5bf53p1e0fdfjsn2d67cc011b10',
+      'X-RapidAPI-Key': EMAIL_API_KEY,
       'X-RapidAPI-Host': 'mail-sender-api1.p.rapidapi.com'
     },
     data: {
       sendto: req.body.email,
-      name: req.body.username,
+      name: 'FocusNook',
       replyTo: 'focusnook68@gmail.com',
       ishtml: 'false',
       title: 'Welcome to FocusNook',
-      body: 'Hello, we are thrilled to welcome you to FocusNook, your personalized productivity companion. FocusNook is designed to help you manage tasks, stay organized, and boost your productivity effortlessly if you have any questions please email focusnook68@gmail.com'
+      body: 'Hello ' + req.body.username + ', ' + 'we are thrilled to welcome you to FocusNook, your personalized productivity companion. FocusNook is designed to help you manage tasks, stay organized, and boost your productivity effortlessly if you have any questions please email focusnook68@gmail.com'
     }
   };
   
