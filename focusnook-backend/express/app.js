@@ -946,7 +946,7 @@ app.post('/register-email', async(req,res) => {
     url: 'https://mail-sender-api1.p.rapidapi.com/',
     headers: {
       'content-type': 'application/json',
-      'X-RapidAPI-Key': '6655f8f112msh34d276bcee5bf53p1e0fdfjsn2d67cc011b10',
+      'X-RapidAPI-Key': '6f19872d0emsheb5c0d7940fdb07p1bafbajsnb820a95db906',
       'X-RapidAPI-Host': 'mail-sender-api1.p.rapidapi.com'
     },
     data: {
