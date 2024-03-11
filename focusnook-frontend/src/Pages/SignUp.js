@@ -18,8 +18,8 @@ function SignUp() {
 
     axios.get('http://localhost:2000/users/count')
     .then(response => {
-      const totalUsers = response.data.count; // Access the count directly from response.data
-      setApiCalls(totalUsers); // Correctly call the setter function
+      const totalUsers = response.data.count; 
+      setApiCalls(totalUsers); 
     
     
       if (apiCalls < 10) {
@@ -56,8 +56,13 @@ function SignUp() {
       return axios.put(`http://localhost:2000/updateCalendarId/${data.userId}`, {calendarId : data.calendarId});
     })
     .then(function (updateResponse) {
-      console.log('User updated with calendar ID:', updateResponse.data);
-      navigate('/login'); // Redirect to login page or dashboard
+      console.log("User updated with calendar ID:", updateResponse.data);
+      // Call the mail-sending API
+      return axios.post("http://localhost:2000/register-email", mailOptions);
+    })
+    .then(function (emailResponse) {
+      console.log("Welcome email sent:", emailResponse.data);
+      navigate("/login"); // Redirect to login page or dashboard
     })
     .catch(function (error) {
       console.error('Error:', error);
