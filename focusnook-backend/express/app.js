@@ -42,6 +42,40 @@ app.use(cors({
   origin: 'http://localhost:3000' // This will allow your frontend server to access the backend
 }));
 
+
+/**
+ * @swagger
+ * /users/count:
+ *   get:
+ *     summary: Get user count
+ *     description: Retrieve the total number of users in the database.
+ *     tags:
+ *         - User
+ *     responses:
+ *       200:
+ *         description: A count of the users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   example: 100
+ *       500:
+ *         description: Error connecting to the database or counting documents.
+ */
+app.get('/users/count', async (req, res) => {
+  try {
+    // Assuming User is a Mongoose model you've already defined
+    const count = await User.countDocuments(); // Mongoose method to count documents
+    res.json({ count: count });
+  } catch (err) {
+    console.error(err.stack); // More detailed error logging
+    res.status(500).send('Error connecting to the database or counting documents.');
+  }
+});
+
 /**
  * @swagger
  *  /register:
@@ -75,18 +109,6 @@ app.use(cors({
  *         500:
  *           description: Internal server error
  */
-
-app.get('/users/count', async (req, res) => {
-  try {
-    // Assuming User is a Mongoose model you've already defined
-    const count = await User.countDocuments(); // Mongoose method to count documents
-    res.json({ count: count });
-  } catch (err) {
-    console.error(err.stack); // More detailed error logging
-    res.status(500).send('Error connecting to the database or counting documents.');
-  }
-});
-
   app.post('/register', async (req, res) => {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -101,6 +123,63 @@ app.get('/users/count', async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+
+
+  /**
+ * @swagger
+ * /updateCalendarId/{id}:
+ *   put:
+ *     summary: Update a user's calendar ID
+ *     description: Updates the specified user's calendar ID.
+ *     tags:
+ *         - Calendar
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               calendarId:
+ *                 type: string
+ *                 description: The new calendar ID to be updated for the user
+ *     responses:
+ *       200:
+ *         description: User's calendar ID updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ *
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The user ID
+ *         username:
+ *           type: string
+ *         email:
+ *           type: string
+ *         password:
+ *           type: string
+ *         calendarId:
+ *           type: string
+ *           description: The calendar ID associated with the user
+ */
 
   app.put('/updateCalendarId/:id', async (req, res) => {
     try {
@@ -340,6 +419,38 @@ app.put('/profile/default-theme', authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /profile/calendarId:
+ *   get:
+ *     summary: Retrieve the calendar ID associated with the user's profile
+ *     description: Fetch the calendar ID from the authenticated user's profile.
+ *     tags:
+ *          - Calendar
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the calendar ID.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 calendarId:
+ *                   type: string
+ *                   description: The calendar ID associated with the user's profile.
+ *       404:
+ *         description: Calendar ID not found for the user.
+ *       500:
+ *         description: Internal server error.
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
 
 // Retrieve user's calendar ID
 app.get('/profile/calendarId', authenticateToken, async (req, res) => {
@@ -942,6 +1053,42 @@ app.get('/tasks/nextweek', authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /register-email:
+ *   post:
+ *     summary: Send a welcome email to a new user
+ *     description: Send a registration welcome email to the newly registered user's email address.
+ *     tags:
+ *          - Email
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: The email address of the newly registered user.
+ *               username:
+ *                 type: string
+ *                 description: The username of the newly registered user.
+ *     responses:
+ *       200:
+ *         description: Email sent successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Emails sent successfully
+ *       500:
+ *         description: Error occurred during email sending.
+ */
 
 app.post('/register-email', async(req,res) => {
   const options = {
@@ -971,7 +1118,7 @@ app.post('/register-email', async(req,res) => {
     res.status(500).json({ error: error.message });
   }
 
-})
+});
 
   
 // Listen on the configured port
