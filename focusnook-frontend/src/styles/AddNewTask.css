@@ -9,7 +9,7 @@
 }
 
 .add-task-container {
-    margin-top: 55px; /* Add margin-top to create a gap between t1 and the form */
+    margin-top: 55px; 
 }
 
 .add-task-container form {
@@ -24,27 +24,26 @@
     margin-bottom: 5px;
     color: #333;
     font-size: 1rem;
-    display: block; /* Ensure labels are block level to avoid wrapping */
+    display: block; 
 }
 
-/* Adjust input styles to match the label width */
 .add-task-container input[type="email"],
 .add-task-container input[type="password"],
 .add-task-container input[type="text"],
 .add-task-container input[type="date"] {
-    width: calc(100% - 20px); /* Full width minus padding */
+    width: calc(100% - 20px); 
     padding: 10px;
     margin-bottom: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-/* Update form-group to handle alignment and spacing */
+
 .form-group {
-    width: 100%; /* Ensuring full width */
+    width: 100%; 
     display: flex;
-    flex-direction: column; /* Stack elements vertically */
-    margin-bottom: 10px; /* Space between form groups */
+    flex-direction: column; 
+    margin-bottom: 10px;
 }
 
 .message-container {
@@ -61,7 +60,7 @@
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
-    width: 100%; /* Full width button */
+    width: 100%; 
     margin-top: 20px;
     margin-bottom: 10px;
 }

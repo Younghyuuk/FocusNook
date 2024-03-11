@@ -19,9 +19,9 @@
     background: rgba(255, 255, 255, 0.5); 
   }
   .select-timer-btn .pause-reset button{
-    justify-content: center; /* Centers content horizontally */
-    align-items: center; /* Centers content vertically */
-    text-align: center; /* Ensures text is centered */
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
     width: 170px;
     height: 100px;
     margin-right: 20px;
@@ -33,12 +33,12 @@
 
   .timer-options {
     display: flex;
-    align-items: center; /* Centers content vertically */
-    justify-content: center; /* Centers content horizontally */
+    align-items: center; 
+    justify-content: center; 
   }
 
   .timer-options button{
-    text-align: center; /* Ensures text is centered */
+    text-align: center; 
     width: 170px;
     height: 100px;
     margin-right: 20px;
@@ -50,16 +50,16 @@
 
   .remaining-time {
     position: absolute;
-    top: 28%; /* Set to 50% of the parent's height */
-    left: 50%; /* Center horizontally */
+    top: 28%; 
+    left: 50%; 
     transform: translate(-50%, -50%);
     font-size: 40px;
   }
   .remaining-time-timer {
     position: absolute;
     font-size: 100px;
-    top: 35%; /* Set to 50% of the parent's height */
-    left: 50%; /* Center horizontally */
+    top: 35%; 
+    left: 50%;
     transform: translate(-50%, -50%);
   }
   .remaining-time-timer, .remaining-time {
@@ -70,9 +70,9 @@
   }
   .pause-reset button{
     position: absolute;
-    align-items: center; /* Centers content vertically */
-    justify-content: center; /* Centers content horizontally */
-    text-align: center; /* Ensures text is centered */
+    align-items: center; 
+    justify-content: center;
+    text-align: center; 
     width: 170px;
     height: 60px;
     margin-right: 20px;
@@ -82,12 +82,12 @@
     text-shadow: 2px 2px 6px rgba(0, 0, 0, 1);
   }
   .pause-btn {
-    top: 57%; /* Set to 50% of the parent's height */
-    left: 45%; /* Center horizontally */
+    top: 57%; 
+    left: 45%; 
     transform: translate(-50%, -50%);
   }
   .reset-btn {
-    top: 57%; /* Set to 50% of the parent's height */
-    left: 55%; /* Center horizontally */
+    top: 57%; 
+    left: 55%; 
     transform: translate(-50%, -50%);
   }
