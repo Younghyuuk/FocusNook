@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/static/css/main.597c0fdc.css",
+    "main.js": "/static/js/main.24210113.js",
+    "static/js/592.02f9f89f.chunk.js": "/static/js/592.02f9f89f.chunk.js",
+    "static/media/autumn-dream.mp3": "/static/media/autumn-dream.89bd21d3a66b81646d3b.mp3",
+    "static/media/magic-dorm.mp3": "/static/media/magic-dorm.5a4323f3c83c49501f3d.mp3",
+    "static/media/mermaid-study.mp3": "/static/media/mermaid-study.c66a7f559542fd7476c5.mp3",
+    "static/media/sunny-greenhouse.mp3": "/static/media/sunny-greenhouse.b3d6b11361f0e91a6927.mp3",
+    "static/media/witch-cottage.mp3": "/static/media/witch-cottage.db6cb3d361b84c72c70e.mp3",
+    "static/media/autumn dream.png": "/static/media/autumn dream.0003a48cb23959365270.png",
+    "static/media/magic dorm.png": "/static/media/magic dorm.460a442c83a7d9898b75.png",
+    "static/media/witch cottage.png": "/static/media/witch cottage.0441f956ea1b29bd47f5.png",
+    "static/media/mermaid study.png": "/static/media/mermaid study.8cc89a04389874275b7d.png",
+    "static/media/sunny greenhouse.png": "/static/media/sunny greenhouse.10b8e81bf977cc30efa2.png",
+    "static/media/focusnook-logo.png": "/static/media/focusnook-logo.f911eaee99e1ce4ea5fd.png",
+    "index.html": "/index.html",
+    "main.597c0fdc.css.map": "/static/css/main.597c0fdc.css.map",
+    "main.24210113.js.map": "/static/js/main.24210113.js.map",
+    "592.02f9f89f.chunk.js.map": "/static/js/592.02f9f89f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.597c0fdc.css",
+    "static/js/main.24210113.js"
+  ]
+}
