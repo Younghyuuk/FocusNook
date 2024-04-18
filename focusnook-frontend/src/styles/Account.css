@@ -1,0 +1,123 @@
+.account-main-container {
+    position: relative;
+    width: 500px; 
+    margin: auto;
+    padding: 20px;
+    margin-top: 10px;
+    z-index: 10; 
+  }
+  
+  .content-container {
+    display: flex;
+    justify-content: space-around; 
+    align-items: flex-start; 
+    gap: 70px; 
+  }
+  
+  .account-container {
+    flex: 3;
+    min-width: 300px; 
+  }
+  
+  .tasks-section {
+    flex: 1; 
+    text-align: left;
+  }
+
+  .tasks-section h3 {
+    margin-top: 0px;
+  }
+
+  .account-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+    justify-content: center;
+    width: 100%; 
+  }
+  
+  .account-container label {
+    margin-bottom: 5px;
+    color: #333; 
+    font-size: 1rem; 
+  }
+  
+  .account-container input[type="email"],
+  .account-container input[type="password"],
+  .account-container input[type="text"] {
+    width: calc(100% - 20px); 
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc; 
+    border-radius: 5px;
+  }
+  
+.email-notification-toggle {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0px;
+  }
+  
+.email-notification-toggle input[type="checkbox"] {
+    width: 25px;
+    height: 15px ;
+  }
+
+  .message-container {
+    min-height: 40px; 
+    margin-bottom: 10px; 
+  }
+  
+  .account-container button {
+    font-family: 'Varela Round', sans-serif;
+    padding: 10px 20px;
+    background-color: #a2bda4; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px; 
+    margin-bottom: 10px;
+  }
+  
+  .account-container button:hover {
+    background-color: #728073; 
+  }
+  
+ 
+
+  .error-message {
+    margin: 0px;
+    color: red;
+    text-align: left;
+  }
+
+  .success-message {
+    margin: 0px;
+    color: rgb(109, 129, 109);
+    text-align: left;
+  }
+
+
+  .logout-button-container {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+  }
+  
+  .logout-button-container button {
+    font-family: 'Varela Round', sans-serif;
+    padding: 10px 20px;
+    background-color: #a4a2bd;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .logout-button-container button:hover {
+    background-color: #4a4369;
+  }

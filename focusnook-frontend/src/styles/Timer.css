@@ -1,0 +1,100 @@
+.timer button {
+    transition: background-color 0.9s ease; 
+    font-family: 'Varela Round', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: rgba(228, 216, 216, 0.781); 
+    color: rgb(255, 255, 255); 
+    border: none;
+}
+
+.set-timer-btn {
+    margin-top: 20px;
+    padding: 30px 40px; 
+    border-radius: 10px; 
+    font-size: 30px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 1);
+  }
+  .set-timer-btn:hover, .select-timer-btn:hover, .timer-options button:hover, .pause-reset button:hover {
+    background: rgba(255, 255, 255, 0.5); 
+  }
+  .select-timer-btn .pause-reset button{
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+    width: 170px;
+    height: 100px;
+    margin-right: 20px;
+    padding: 20px 30px; 
+    border-radius: 10px; 
+    font-size: 30px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 1);
+  }
+
+  .timer-options {
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+  }
+
+  .timer-options button{
+    text-align: center; 
+    width: 170px;
+    height: 100px;
+    margin-right: 20px;
+    padding: 20px 30px; 
+    border-radius: 10px; 
+    font-size: 25px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 1);
+  }
+
+  .remaining-time {
+    position: absolute;
+    top: 28%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+  }
+  .remaining-time-timer {
+    position: absolute;
+    font-size: 100px;
+    top: 35%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .remaining-time-timer, .remaining-time {
+    font-family: 'Varela Round', sans-serif;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 1);
+  }
+  .pause-reset button{
+    position: absolute;
+    align-items: center; 
+    justify-content: center;
+    text-align: center; 
+    width: 170px;
+    height: 60px;
+    margin-right: 20px;
+    padding: 20px 30px; 
+    border-radius: 10px; 
+    font-size: 20px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 1);
+  }
+  .pause-btn {
+    top: 57%; 
+    left: 45%; 
+    transform: translate(-50%, -50%);
+  }
+  .reset-btn {
+    top: 57%; 
+    left: 55%; 
+    transform: translate(-50%, -50%);
+  }
+  .error-message {
+    font-family: 'Varela Round', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    color: rgb(194, 38, 38);
+    background-color: rgb(255, 255, 255, 0.9);
+  }

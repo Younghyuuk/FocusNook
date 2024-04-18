@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "dotenv": "^16.4.4",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "npm": "^10.4.0"
+  },
+  "name": "focusnook",
+  "description": "express setup",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Younghyuuk/FocusNook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Younghyuuk/FocusNook/issues"
+  },
+  "homepage": "https://github.com/Younghyuuk/FocusNook#readme"
+}

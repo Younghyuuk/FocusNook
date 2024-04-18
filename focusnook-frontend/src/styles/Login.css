@@ -1,0 +1,76 @@
+.auth-form-container {
+    position: relative;
+    background-image: url('../assets/witch cottage.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+  }
+  .auth-form-container::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: rgba(0, 0, 0, 0.6); 
+      z-index: 1; 
+  }
+  
+  .logo-container {
+    position: relative; 
+    z-index: 2; 
+  }
+  
+  .login-form, .signup-form {
+    color: white;
+    position: relative; 
+    z-index: 2; 
+    display: flex;
+    flex-direction: column;
+  }
+
+  .signup-text, .login-text {
+    position: relative; 
+    z-index: 2; 
+    color:white;
+  }
+  
+  label {
+    text-align: left;
+  }
+  
+  input {
+    margin: 0.5rem 0;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 10px;
+  }
+  
+  button {
+    margin: 1rem 0;
+    border: none;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .link-btn {
+    background: none;
+    color: white;
+    text-decoration: underline;
+  }
+  .error-message {
+    color: red;
+    margin-top: 10px;
+}
+a:visited {
+  color: rgb(255, 204, 248); 
+}
